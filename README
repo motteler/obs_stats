@@ -17,16 +17,17 @@ reads the ccast allgeo files
   ddiff_time   - time double difference
   extend_time  - compare 16 and 32 day sequences
 
-The AIRS and CrIS tbin functions take a list of days, cross track
-indices, and frequencies, and build a table of obs per temperature
-bin.  These functions are relatively slow because they read all
-granules over the time span.  The plot_tbin scripts plot comparison
-results.  tbin_list.txt is a list of recent tests.
+The AIRS and CrIS tbin functions take parameters year, day list,
+cross track indices, frequency span, and (with in-line mods) ocean
+or land subsets.  They read every granule over the requested span
+and build tables of obs per Tb bin by day.
 
-  airs_tbin  - AIRS Tb bins with optional lat and ocean subsetting
-  cris_tbin  - CrIS Tb bins with optional lat and ocean subsetting
-  plot_tbin  - comparison plots for airs_tbin and cris_tbin
-  plot_tbin? - variations on the basic plot_tbin tests
+  airs_tbin  - tabulate AIRS Tb bins
+  cris_tbin  - tabulate CrIS Tb bins
+  airs_batch - batch driver for airs_tbin
+  cris_batch - batch driver for cris_tbin
+  plot_tbin  - compare AIRS and CrIS
+  plot_airs  - multi-year AIRS stats
 
 other scripts
 

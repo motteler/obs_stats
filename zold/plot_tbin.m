@@ -3,17 +3,7 @@
 %
 
 d1 = load('airs_tbinW');
-d3 = load('airs_tbinX');
-d5 = load('airs_tbinY');
-d7 = load('airs_tbinZ');
-
 d2 = load('cris_tbinW');
-d4 = load('cris_tbinX');
-d6 = load('cris_tbinY');
-d8 = load('cris_tbinZ');
-
-d1.tbin = d1.tbin + d3.tbin + d5.tbin + d7.tbin;
-d2.tbin = d2.tbin + d4.tbin + d6.tbin + d8.tbin;
 
 na = sum(d1.tbin)
 nc = sum(d2.tbin)
@@ -23,7 +13,7 @@ figure(1)
 subplot(2,1,1)
   plot(tind, d1.tbin, tind, (na/nc)*d2.tbin, 'linewidth', 2)
 % plot(tind, d1.tbin, tind, d2.tbin, 'linewidth', 2)
-  axis([200, 330, 0, 8e6])
+  axis([200, 330, 0, 2e6])
 % axis([200, 305, 0, 4e5])
   title('obs count by 900 cm-1 temperature bins')
 % title('obs count by SW cm-1 temperature bins')

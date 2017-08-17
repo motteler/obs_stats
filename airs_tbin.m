@@ -1,34 +1,54 @@
 %
-% airs_tbin - AIRS Tb bins with lat and ocean subsetting
+% NAME
+%   airs_tbin - tabulate AIRS obs x Tb bins
+%
+% SYNOPSIS
+%   airs_tbin(year, dlist, tfile, opt1)
+%
+% INPUTS
+%   year   - year, as an integer
+%   dlist  - list of days-of-the-year
+%   tfile  - save file for tabulation
+%
+% DISCUSSION
+%
+% AUTHOR
+%  H. Motteler, 3 July 2017
 %
 
-addpath ../source
+function airs_tbin(year, dlist, tfile, opt1)
 
-% year and path to data
-  ayear = '/asl/data/airs/L1C/2016';
-% ayear = '/asl/data/airs/L1C/2017';
+% default params 
+adir = '/asl/data/airs/L1C';   % path to AIRS data
+ixt = 1 : 90;         % full scans
+v1 = 899; v2 = 904;   % Tb frequency span
+T1 = 180; T2 = 340;   % Tb bin span
+dT = 0.25;            % Tb bin step size
+nedn = 0.2;           % noise for smoothing
 
-% specify days of the year
-dlist = 111 : 126;  % 2016 no missing granules
+% process input options
+if nargin == 4
+  if isfield(opt1, 'adir'), adir = opt1.adir; end
+  if isfield(opt1, 'ixt'),  ixt  = opt1.ixt; end
+  if isfield(opt1, 'v1'),   v1   = opt1.v1; end
+  if isfield(opt1, 'v2'),   v2   = opt1.v2; end
+  if isfield(opt1, 'T1'),   T1   = opt1.T1; end
+  if isfield(opt1, 'T2'),   T2   = opt1.T2; end
+  if isfield(opt1, 'dT'),   dT   = opt1.dT; end
+  if isfield(opt1, 'nedn'), nedn = opt1.nedn; end
+else
+  opt1 = struct;
+end
 
-% xtrack subset
-% ixt = 43 : 48;              % 1 near nadir
-  ixt =  1 : 90;              % 2 full scan
-% ixt = [21:23 43:48 68:70];  % 3 near nadir plus half scan
-% ixt = [21:23 68:70];        % 4 half scan only
-% ixt = 37 : 54;              % 5 expanded nadir
-nxt = length(ixt);
+% path to AIRS data, including year
+ayear = fullfile(adir, sprintf('%d', year));
 
-% freq span for Tb
-  v1 =  899; v2 =  904; nedn = 0.2;
-% v1 = 2450; v2 = 2550;
-
-% initialize bins
-dT = 0.25;
-T1 = 200;  T2 = 340;
+% initialize Tb bins
 tind = T1 : dT : T2;
+tmid = tind + dT/2;
 nbin = length(tind);
-tbin = zeros(nbin, 1);
+nday = length(dlist);
+tbin = zeros(nbin, nday);
 
 % L1c channel frequencies
 afrq = load('freq2645.txt');
@@ -36,17 +56,23 @@ ixv = find(v1 <= afrq & afrq <=v2);
 afrq = afrq(ixv);
 
 % loop on days of the year
-for di = dlist
-  
-  % loop on L1c granules
-  doy = sprintf('%03d', di);
+for di = 1 : nday
+
+  % loop on AIRS granules
+  doy = sprintf('%03d', dlist(di));
+  fprintf(1, 'doy %s ', doy)
   flist = dir(fullfile(ayear, doy, 'AIRS*L1C*.hdf'));
 
   for fi = 1 : length(flist);
 
     % radiance channel and xtrack subset
     afile = fullfile(ayear, doy, flist(fi).name);
-    rad = hdfread(afile, 'radiances');
+    try
+      rad = hdfread(afile, 'radiances');
+    catch
+      fprintf(1, '\nairs_tbin: bad file %s', afile)
+      continue
+    end
     rad = rad(:, ixt, ixv);
     rad = permute(rad, [3,2,1]);
 
@@ -64,6 +90,7 @@ for di = dlist
     iOK = -90 <= lat & lat <= 90;
 
     % latitude subsample
+    nxt = length(ixt);
     lat_rad = deg2rad(lat);
     jx = rand(nxt, 135) < abs(cos(lat_rad));
     jx = jx & iOK;
@@ -74,8 +101,8 @@ for di = dlist
     lon = lon(jx);
 
     [~, landfrac] = usgs_deg10_dem(lat', lon');
-    ocean = landfrac == 0;
-    rad = rad(:, ocean);
+%   ocean = landfrac == 0;
+%   rad = rad(:, ocean);
 %   land = landfrac == 1;
 %   rad = rad(:, land);
     if isempty(rad), continue, end
@@ -94,13 +121,15 @@ for di = dlist
     ix(nbin < ix) = nbin;
 
     for i = 1 : length(ix)
-      tbin(ix(i)) = tbin(ix(i)) + 1;
+      tbin(ix(i), di) = tbin(ix(i), di) + 1;
     end
 
     if mod(fi, 10) == 0, fprintf(1, '.'), end
-  end
+  end % loop on granules
   fprintf(1, '\n')
-end
+end % loop on days
 
-save airs_tbin ayear dlist ixt v1 v2 afrq tind tbin
+save(tfile, 'year', 'dlist', 'adir', 'ixt', 'v1', 'v2', ...
+            'dT', 'T1', 'T2', 'nedn', 'afrq', 'tind', 'tmid', 'tbin')
+
 
