@@ -1,56 +1,92 @@
 %
-% plot_tbin3 - compare successive AIRS years
+% plot_airs - compare successive AIRS years
 %
 
 addpath airs_pdfs
 
-a1 = load('airs902y2016q1');
-a2 = load('airs902y2016q2');
-a3 = load('airs902y2016q3');
-a4 = load('airs902y2016q4');
-a5 = load('airs902y2016q5');
-
-b1 = load('airs902y2015q1');
-b2 = load('airs902y2015q2');
-b3 = load('airs902y2015q3');
-b4 = load('airs902y2015q4');
-b5 = load('airs902y2015q5');
-
-c1 = load('airs902y2014q1');
-c2 = load('airs902y2014q2');
-c3 = load('airs902y2014q3');
-c4 = load('airs902y2014q4');
-c5 = load('airs902y2014q5');
-
-tbin_a = [a1.tbin, a2.tbin, a3.tbin, a4.tbin, a5.tbin];
-tbin_b = [b1.tbin, b2.tbin, b3.tbin, b4.tbin, b5.tbin];
-tbin_c = [c1.tbin, c2.tbin, c3.tbin, c4.tbin, c5.tbin];
+% load annual tabulations
+a11 = load('airs902y2011');
+a12 = load('airs902y2012');
+a13 = load('airs902y2013');
+a14 = load('airs902y2014');
+a15 = load('airs902y2015');
+a16 = load('airs902y2016');
 
 % sum along days
-tbin_a = sum(tbin_a, 2);
-tbin_b = sum(tbin_b, 2);
-tbin_c = sum(tbin_c, 2);
+tbin11 = sum(a11.tbin, 2);
+tbin12 = sum(a12.tbin, 2);
+tbin13 = sum(a13.tbin, 2);
+tbin14 = sum(a14.tbin, 2);
+tbin15 = sum(a15.tbin, 2);
+tbin16 = sum(a16.tbin, 2);
 
-na = sum(tbin_a)
-nb = sum(tbin_b)
-nc = sum(tbin_c)
-tmid = a1.tmid;
+% annual obs counts
+n11 = sum(tbin11);
+n12 = sum(tbin12);
+n13 = sum(tbin13);
+n14 = sum(tbin14);
+n15 = sum(tbin15);
+n16 = sum(tbin16);
+
+% normalize to 2016
+tmp11 = (n16/n11)*tbin11;
+tmp12 = (n16/n12)*tbin12;
+tmp13 = (n16/n13)*tbin13;
+tmp14 = (n16/n14)*tbin14;
+tmp15 = (n16/n15)*tbin15;
+tmp16 = (n16/n16)*tbin16;
+
+% mean normalized counts
+tref = mean([tmp11, tmp12, tmp13, tmp14, tmp15, tmp16], 2);
+
+% count diff from mean
+dif_11 = tmp11 - tref;
+dif_12 = tmp12 - tref;
+dif_13 = tmp13 - tref;
+dif_14 = tmp14 - tref;
+dif_15 = tmp15 - tref;
+dif_16 = tmp16 - tref;
+
+rel_11 = (tmp11 - tref) ./ tref;
+rel_12 = (tmp12 - tref) ./ tref;
+rel_13 = (tmp13 - tref) ./ tref;
+rel_14 = (tmp14 - tref) ./ tref;
+rel_15 = (tmp15 - tref) ./ tref;
+rel_16 = (tmp16 - tref) ./ tref;
+
+% midpoints for Tb bins
+tmid = a16.tmid;
 
 figure(1)
 subplot(2,1,1)
-tmp_b = (na/nb)*tbin_b;
-tmp_c = (na/nc)*tbin_c;
-
-plot(tmid, tbin_a, tmid, tmp_b,  tmid, tmp_c, 'linewidth', 2)
+plot(tmid, tmp11, tmid, tmp12, tmid, tmp13, tmid, tmp14, ...
+     tmid, tmp15, tmid, tmp16, 'linewidth', 2)
 axis([190, 330, 0, 1.4e7])
-title('AIRS obs count by 900 cm-1 temperature bins')
-legend('2016', '2015', '2014', 'location', 'northwest')
+title('AIRS obs count by 902 cm-1 Tb bins')
+legend('2011', '2012', '2013', '2014', '2015', '2016', ...
+       'location', 'northwest')
 grid on
 
 subplot(2,1,2)
-plot(tmid, (tbin_a - tmp_c) ./ tmp_c, 'linewidth', 2)
-axis([190, 330,-0.1, 0.1])
-title('2016 minus 2014 AIRS relative difference')
+plot(tmid, rel_11, tmid, rel_12, tmid, rel_13, tmid, rel_14, ...
+     tmid, rel_15, tmid, rel_16, 'linewidth', 2)
+axis([190, 330, -0.3, 0.3])
+title('AIRS relative difference from mean')
+legend('2011', '2012', '2013', '2014', '2015', '2016', ...
+       'location', 'north')
 xlabel('Tb, K')
 grid on
+
+return
+
+subplot(2,1,2)
+plot(tmid, dif11, tmid, dif12, tmid, dif13, tmid, dif14, ...
+     tmid, dif15, tmid, dif16, 'linewidth', 2)
+axis([190, 330, -8e5, 8e5])
+title('AIRS obs count difference from mean')
+legend('2011', '2012', '2013', '2014', '2015', '2016', ...
+       'location', 'northwest')
+xlabel('Tb, K')
+grid on
+
 
