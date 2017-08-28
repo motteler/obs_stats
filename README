@@ -27,7 +27,8 @@ and build tables of obs per Tb bin by day.
   airs_batch - batch driver for airs_tbin
   cris_batch - batch driver for cris_tbin
   plot_tbin  - compare AIRS and CrIS
-  plot_airs  - multi-year AIRS stats
+  plot_airs  - multi-year basic AIRS PDF stats
+  airs_pdfs  - multi-year AIRS moving-span PDFs
 
 other scripts
 

@@ -2,20 +2,22 @@
 % plot_tbin - show results from airs_tbin and cris_tbin
 %
 
-addpath airs_pdfs
+addpath airs_pdfs/quintiles
 addpath cris_pdfs
 
-a1 = load('airs902y2016q1');
-a2 = load('airs902y2016q2');
-a3 = load('airs902y2016q3');
-a4 = load('airs902y2016q4');
-a5 = load('airs902y2016q5');
+year = 2013
 
-c1 = load('cris902y2016q1');
-c2 = load('cris902y2016q2');
-c3 = load('cris902y2016q3');
-c4 = load('cris902y2016q4');
-c5 = load('cris902y2016q5');
+a1 = load(sprintf('airs902y%dq1', year));
+a2 = load(sprintf('airs902y%dq2', year));
+a3 = load(sprintf('airs902y%dq3', year));
+a4 = load(sprintf('airs902y%dq4', year));
+a5 = load(sprintf('airs902y%dq5', year));
+
+c1 = load(sprintf('cris902y%dq1', year));
+c2 = load(sprintf('cris902y%dq2', year));
+c3 = load(sprintf('cris902y%dq3', year));
+c4 = load(sprintf('cris902y%dq4', year));
+c5 = load(sprintf('cris902y%dq5', year));
 
 tbin_a = [a1.tbin, a2.tbin, a3.tbin, a4.tbin, a5.tbin];
 tbin_c = [c1.tbin, c2.tbin, c3.tbin, c4.tbin, c5.tbin];

@@ -12,6 +12,9 @@
 #SBATCH --mem-per-cpu=16000
 #SBATCH --array=1-5
 
+# new bad node list
+#SBATCH --exclude=n79,n111,n135,n311,n313,n315,n319,n320
+
 # matlab options
 MATLAB=/usr/cluster/matlab/2016a/bin/matlab
 MATOPT='-nojvm -nodisplay -nosplash'

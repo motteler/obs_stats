@@ -19,7 +19,7 @@
 function cris_tbin(year, dlist, tfile, opt1)
 
 % default params 
-cdir = '/asl/data/cris/ccast/sdr60_hr';  % path to CrIS data
+cdir = '/asl/data/cris/ccast/sdr60';   % path to CrIS data
 iFOR =  1 : 30;       % full scans
 v1 = 899; v2 = 904;   % Tb frequency span
 T1 = 180; T2 = 340;   % Tb bin span
@@ -60,30 +60,23 @@ for di = dlist
 
     afile = fullfile(ayear, doy, flist(fi).name);
 
-%   % load everyting for local L1b_err calc
-%   d1 = load(afile);
-
-%   % just load LW radiances
+    % load LW radiances
     d1 = load(afile, 'vLW', 'rLW', 'L1b_err', 'geo');
     ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
     rad = d1.rLW(ixv,:,iFOR,:);
     cfrq = d1.vLW(ixv);
 
-%   % just load SW radiances
+%   % load SW radiances
 %   d1 = load(afile, 'vSW', 'rSW', 'L1b_err');
 %   ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
 %   rad = d1.rSW(ixv,:,iFOR,:);
 %   cfrq = d1.vSW(ixv);
 
-%  % new L1b_err local calc
-%   L1b_err = ...
-%      checkSDR(d1.vLW, d1.vMW, d1.vSW, d1.rLW, d1.rMW, d1.rSW, ...
-%               d1.cLW, d1.cMW, d1.cSW, d1.L1a_err, d1.rid);
-%   iOK = ~L1b_err(:,iFOR,:);
-%   rad = rad(:,iOK);
- 
-    % new L1b_err from file
-    iOK = ~d1.L1b_err(:,iFOR,:);
+    % use the new L1b_err 
+%   iOK = ~d1.L1b_err(:,iFOR,:);
+    iOK = ~d1.L1b_err(:,iFOR,:) & -90 <= d1.geo.Latitude(:,iFOR,:);
+
+    % radiance subset
     rad = rad(:,iOK);
 
     % read lat and lon
