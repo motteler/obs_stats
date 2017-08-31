@@ -1,5 +1,5 @@
 %
-% airs_pdf - compare successive AIRS years
+% airs_pdfs - AIRS multi-year moving PDFs
 %
 
 addpath airs_pdfs
@@ -20,21 +20,19 @@ for year = 2002 : 2017
   tbin = [tbin, d1.tbin];
 end
 
-% Tb bin specs
+% Tb bin midpoints
 tmid = d1.tmid;
-tind = d1.tind;
 
 % drop tbin Tb extremes
 [m, n] = size(tbin);
 ix = 21 : m - 21;
 tbin = tbin(ix,:);
 tmid = tmid(ix);
-tind = tind(ix);
 [m, n] = size(tbin);
 
 % set up the moving PDF
   k1 = 1 * 16;           % half moving PDF span
-% k1 = 183;              % half moving PDF span
+% k1 = 182;              % half moving PDF span
 k2 = 2 * k1;           % full moving PDF span
 k3 = n - k2 + 1;       % total obs minus PDF span wings
 nbin2 = zeros(1, k3);  % moving tabulation obs count
@@ -70,8 +68,13 @@ tint = sum(ttmp);
 % tfit = polyval(p1, ynum2);
 
 % simple moving average
+% [mavg, iavg] = moving_avg(tint, 2);    % 4-day
   [mavg, iavg] = moving_avg(tint, 182);  % 1 year
 % [mavg, iavg] = moving_avg(tint, 364);  % 2 year
+
+% save data snapshot
+% clear d1
+% save(sprintf('airs_pdfs_%d', k2))
 
 figure(1); clf
 % pcolor(ynum2, tmid, tbin3)

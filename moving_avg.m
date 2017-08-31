@@ -6,7 +6,7 @@ b = zeros(m, n - 2*k);
 ib = k + 1 : n - k;
 
 for i = ib
-  b(:, i - k) = mean(a(:, i - k : i + k), 2);
+  b(:, i - k) = nanmean(a(:, i - k : i + k), 2);
 end
 
 % use subrange at domain edges
