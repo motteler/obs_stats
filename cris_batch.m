@@ -31,8 +31,8 @@ switch(taskid)
 end
 
 % set the output filename 
-% tfile = sprintf('cris902y%dq%d', year, taskid);
-  tfile = sprintf('airs2500y%dq%d', year, taskid);
+  tfile = sprintf('cris902y%dq%d', year, taskid);
+% tfile = sprintf('cris2500y%dq%d', year, taskid);
 
 opt1 = struct;
 
@@ -44,9 +44,9 @@ opt1 = struct;
 % opt1.iFOR = [8 23];        % 4 half scan only
 % opt1.iFOR = 13 : 18;       % 5 expanded nadir
 
-  opt1.v1 = 2450; opt1.v2 = 2550;  % broad SW window
-% opt1.v1 = 899;  opt1.v2 = 904;   % Tb frequency span
-% opt1.T1 = 180;  opt1.T2 = 340;   % Tb bin span
+% opt1.v1 = 2450; opt1.v2 = 2550;  % SW Tb frequency span
+  opt1.v1 = 899;  opt1.v2 = 904;   % LW Tb frequency span
+  opt1.T1 = 180;  opt1.T2 = 360;   % Tb bin span
   opt1.dT = 0.5;                   % Tb bin step size
 
 cris_tbin(year, dlist, tfile, opt1)

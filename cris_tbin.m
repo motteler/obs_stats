@@ -23,7 +23,7 @@ cdir = '/asl/data/cris/ccast/sdr60';   % path to CrIS data
 iFOR =  1 : 30;       % full scans
 v1 = 899; v2 = 904;   % Tb frequency span
 T1 = 180; T2 = 340;   % Tb bin span
-dT = 0.25;            % Tb bin step size
+dT = 0.5;             % Tb bin step size
 
 % process input options
 if nargin == 4
@@ -61,20 +61,29 @@ for di = dlist
     afile = fullfile(ayear, doy, flist(fi).name);
 
     % load LW radiances
-    d1 = load(afile, 'vLW', 'rLW', 'L1b_err', 'geo');
+%   d1 = load(afile, 'vLW', 'rLW', 'L1b_err', 'geo');
+    d1 = load(afile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
     ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
     rad = d1.rLW(ixv,:,iFOR,:);
     cfrq = d1.vLW(ixv);
 
 %   % load SW radiances
-%   d1 = load(afile, 'vSW', 'rSW', 'L1b_err');
+%   d1 = load(afile, 'vSW', 'rSW', 'L1b_err', 'L1b_stat', 'L1a_err', 'geo');
 %   ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
 %   rad = d1.rSW(ixv,:,iFOR,:);
 %   cfrq = d1.vSW(ixv);
 
-    % use the new L1b_err 
+%   % use the SDR file L1b_err
 %   iOK = ~d1.L1b_err(:,iFOR,:);
-    iOK = ~d1.L1b_err(:,iFOR,:) & -90 <= d1.geo.Latitude(:,iFOR,:);
+
+    % do our own error checking
+    ix = d1.L1a_err(iFOR, :);
+    [m, n] = size(ix);
+    ix = ones(9,1) * ix(:)';
+    ix = reshape(ix, 9, m, n);
+    ibad = ix | d1.L1b_stat.negLW | d1.L1b_stat.nanLW;
+%   ibad = ix | d1.L1b_stat.negSW | d1.L1b_stat.nanSW;
+    iOK = ~ibad;
 
     % radiance subset
     rad = rad(:,iOK);
@@ -93,13 +102,13 @@ for di = dlist
     lon = lon(jx);
     rad = rad(:,jx);
 
-    % ocean or land subset
-    [~, landfrac] = usgs_deg10_dem(lat', lon');
+%   % land or ocean subsets
+%   [~, landfrac] = usgs_deg10_dem(lat', lon');
 %   ocean = landfrac(:) == 0;
 %   rad = rad(:, ocean);
 %   land = landfrac(:) == 1;
 %   rad = rad(:, land);
-    if isempty(rad), continue, end
+%   if isempty(rad), continue, end
 
     % brightness temp bins
     Tb = real(rad2bt(cfrq, rad));
@@ -118,8 +127,6 @@ for di = dlist
   end
   fprintf(1, '\n')
 end
-
-save cris_tbin ayear dlist iFOR v1 v2 cfrq tind tbin
 
 save(tfile, 'year', 'dlist', 'cdir', 'iFOR', 'v1', 'v2', ...
             'dT', 'T1', 'T2', 'cfrq', 'tind', 'tmid', 'tbin')

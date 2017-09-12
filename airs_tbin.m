@@ -23,7 +23,7 @@ adir = '/asl/data/airs/L1C';   % path to AIRS data
 ixt = 1 : 90;         % full scans
 v1 = 899; v2 = 904;   % Tb frequency span
 T1 = 180; T2 = 340;   % Tb bin span
-dT = 0.25;            % Tb bin step size
+dT = 0.5;             % Tb bin step size
 nedn = 0.2;           % noise for smoothing
 
 % process input options
@@ -86,8 +86,13 @@ for di = 1 : nday
     lon = lon(:,ixt);
     lon = permute(lon, [2,1]);
 
-    % basic latitude QC
-    iOK = -90 <= lat & lat <= 90;
+    % typical values
+    %  lat     90x135   97200  double              
+    %  lon     90x135   97200  double              
+    %  rad  14x90x135  680400  single              
+ 
+    % basic radiance and latitude QC
+    iOK = -90 <= lat & lat <= 90 & cAND(-1 < rad & rad < 250);
 
     % latitude subsample
     nxt = length(ixt);
@@ -99,19 +104,26 @@ for di = 1 : nday
     rad = rad(:,jx);
     lat = lat(jx);
     lon = lon(jx);
+    if isempty(lat), continue, end
 
-    [~, landfrac] = usgs_deg10_dem(lat', lon');
+    % typical values
+    %  lat     2177x1   17416  double              
+    %  lon     2177x1   17416  double              
+    %  rad  14x2177    121912  single              
+
+%   % land or ocean subsets
+%   [~, landfrac] = usgs_deg10_dem(lat', lon');
 %   ocean = landfrac == 0;
 %   rad = rad(:, ocean);
 %   land = landfrac == 1;
 %   rad = rad(:, land);
-    if isempty(rad), continue, end
+%   if isempty(rad), continue, end
 
     % add noise to smooth discretization
     [m,n] = size(rad);
     rad = rad + randn(m,n) * nedn;
 
-    % brightness temp bins
+    % increment Tb bin counts
     Tb = real(rad2bt(afrq, rad));
     rmsTb = rms(Tb);
     rmsTb = rmsTb(:);

@@ -5,7 +5,7 @@
 addpath airs_pdfs/quintiles
 addpath cris_pdfs
 
-year = 2013
+year = 2016
 
 a1 = load(sprintf('airs902y%dq1', year));
 a2 = load(sprintf('airs902y%dq2', year));
