@@ -13,7 +13,7 @@
 #SBATCH --array=1-5
 
 # new bad node list
-#SBATCH --exclude=n79,n110,n111,n135,n241,n311,n313,n315,n319,n320
+#SBATCH --exclude=n71,n101,n103,n126,n150
 
 # matlab options
 MATLAB=/usr/cluster/matlab/2016a/bin/matlab

@@ -2,7 +2,8 @@
 % plot_tbin - show results from airs_tbin and cris_tbin
 %
 
-addpath pdf_test_360K
+% addpath pdf_test_360K
+  addpath pdf_test_land
 
 year = 2015
 

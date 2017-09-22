@@ -22,7 +22,7 @@ function airs_tbin(year, dlist, tfile, opt1)
 adir = '/asl/data/airs/L1C';   % path to AIRS data
 ixt = 1 : 90;         % full scans
 v1 = 899; v2 = 904;   % Tb frequency span
-T1 = 180; T2 = 340;   % Tb bin span
+T1 = 180; T2 = 360;   % Tb bin span
 dT = 0.5;             % Tb bin step size
 nedn = 0.2;           % noise for smoothing
 
@@ -111,13 +111,13 @@ for di = 1 : nday
     %  lon     2177x1   17416  double              
     %  rad  14x2177    121912  single              
 
-%   % land or ocean subsets
+    % land or ocean subsets
 %   [~, landfrac] = usgs_deg10_dem(lat', lon');
-%   ocean = landfrac == 0;
+%   ocean = landfrac(:) == 0;
 %   rad = rad(:, ocean);
-%   land = landfrac == 1;
+%   land = landfrac(:) == 1;
 %   rad = rad(:, land);
-%   if isempty(rad), continue, end
+    if isempty(rad), continue, end
 
     % add noise to smooth discretization
     [m,n] = size(rad);

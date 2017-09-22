@@ -97,3 +97,13 @@ ylabel('Tb, K')
 xlabel('year')
 grid on; zoom on
 
+% Tb PDF cross-correlation test
+figure(3); clf
+Tcorr = corrcoef(tbin');
+imagesc(tmid, tmid, Tcorr);
+set(gca,'YDir','normal')
+title('2002-2017 AIRS PDF Tb correlation')
+xlabel('Tb, K')
+ylabel('Tb, K')
+colorbar
+
