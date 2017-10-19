@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# usage: sbatch cris_batch.sh <year>
+# usage: sbatch airs_tbin_batch.sh <year>
 #
 
 # sbatch options
-#SBATCH --job-name=cris_tbin
-#SBATCH --output=cris_%A_%a.out
+#SBATCH --job-name=airs_tbin
+#SBATCH --output=airs_%A_%a.out
 #SBATCH --partition=batch
 #SBATCH --qos=medium_prod
 #SBATCH --account=pi_strow
@@ -13,11 +13,11 @@
 #SBATCH --array=1-5
 
 # new bad node list
-#SBATCH --exclude=n71,n101,n103,n126,n150
+# #SBATCH --exclude=n71,n101,n103,n126,n150
 
 # matlab options
 MATLAB=/usr/cluster/matlab/2016a/bin/matlab
 MATOPT='-nojvm -nodisplay -nosplash'
 
-srun $MATLAB $MATOPT -r "cris_batch($1); exit"
+srun $MATLAB $MATOPT -r "airs_tbin_batch($1); exit"
 

@@ -1,5 +1,5 @@
 %
-% airs_obslist -- lat and lon bins for AIRS obs
+% airs_geo_list -- geo list and bins for AIRS obs
 %
 
 addpath ./time
@@ -85,10 +85,7 @@ stai = tai(ix);
 nsub = numel(slat);
 fprintf(1, '%d obs after subset\n', nsub)
 
-save airs_obs_xxxx ayear dlist ixt nobs nsub slat slon stai ssol
-
-% save airs_obs_xxxx ayear dlist ixt nobs nsub slat slon stai
-% save airs_subpt ayear dlist ixt nobs lat lon tai
+save airs_geo_xxxx ayear dlist ixt nobs nsub slat slon stai ssol
 
 return
 

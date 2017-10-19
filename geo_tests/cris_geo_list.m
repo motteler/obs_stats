@@ -1,5 +1,5 @@
 %
-% cris_obslist -- lat and lon bins for CrIS obs
+% cris_geo_list -- geo list and bins for CrIS obs
 %
 
 addpath ./time
@@ -103,10 +103,7 @@ fprintf(1, '%d obs after subset\n', nsub)
 % slon = slon(~sasc);
 % stai = stai(~sasc);
 
-save cris_obs_xxxx year dlist iFOR iFOV nobs nsub slat slon stai ssol
-
-% save cris_obs_xxxx year dlist iFOR iFOV nobs nsub slat slon stai
-% save cris_subpt year dlist iFOR iFOV nobs lat lon tai
+save cris_geo_xxxx year dlist iFOR iFOV nobs nsub slat slon stai ssol
 
 return
 

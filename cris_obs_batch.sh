@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# usage: sbatch airs_batch.sh <year>
+# usage: sbatch cris_obs_batch.sh <year>
 #
 
 # sbatch options
-#SBATCH --job-name=airs_tbin
-#SBATCH --output=airs_%A_%a.out
+#SBATCH --job-name=cris_obs
+#SBATCH --output=cris_%A_%a.out
 #SBATCH --partition=batch
 #SBATCH --qos=medium_prod
 #SBATCH --account=pi_strow
@@ -19,5 +19,5 @@
 MATLAB=/usr/cluster/matlab/2016a/bin/matlab
 MATOPT='-nojvm -nodisplay -nosplash'
 
-srun $MATLAB $MATOPT -r "airs_batch($1); exit"
+srun $MATLAB $MATOPT -r "cris_obs_batch($1); exit"
 

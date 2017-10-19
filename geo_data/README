@@ -1,7 +1,7 @@
 
-"obslist" tests; parallel AIRS and CrIS lat, lon, time, 
+geo list tests; parallel AIRS and CrIS lat, lon, time,
 (and sometimes zenith or other relevant values) lists from parallel
-runs of airs_obslist and cris_obslist with corresponding parameters.
+runs of airs_obsbin and cris_obsbin with corresponding parameters.
 Tabulations are typically saved as cris_obs_xxxx and airs_obs_xxxx,
 where xxxs is some combination of the test parameters below.
 
