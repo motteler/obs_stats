@@ -1,8 +1,21 @@
 
-obs lists
-----------
-  airs_obs_list - list selected AIRS obs
-  cris_obs_list - list selected CrIS obs
+obs list tests
+---------------
+
+These are similar to the PDF tests below.  They take parameters
+such as year, days, cross track index, and frequency and Tb sample
+spans, read every granule for the requested days, and build lists of
+selected obs.  Obs saved include Tb, lat, lon, time, solar zenith,
+and satellite zenith.
+
+  obs_list_data  - obs list data, mostly as quintiles
+
+  airs_obs_list  - build list of selected AIRS obs
+  cris_obs_list  - build list of selected CrIS obs
+  cris_obs_batch - batch wrapper for cris_obs_list
+  airs_obs_batch - batch wrapper for airs_obs_list
+  plot_hot_*     - assorted plot and test scripts
+  uw_qc_*        - QC with UW omplex residual test
 
 PDF tests
 ----------

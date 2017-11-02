@@ -1,5 +1,5 @@
 %
-% airs_batch - batch wrapper for airs_obs_list
+% airs_obs_batch - batch wrapper for airs_obs_list
 %
 
 function airs_batch(year)
