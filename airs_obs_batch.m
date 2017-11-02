@@ -1,8 +1,8 @@
 %
-% cris_obs_batch - batch wrapper for cris_obs_list
+% airs_batch - batch wrapper for airs_obs_list
 %
 
-function cris_obs_batch(year)
+function airs_batch(year)
 
 addpath /asl/packages/ccast/source
 addpath /asl/packages/ccast/motmsc/time
@@ -14,7 +14,7 @@ nprocs = str2num(getenv('SLURM_NPROCS'));
 nodeid = sscanf(getenv('SLURMD_NODENAME'), 'n%d');
 taskid = str2num(getenv('SLURM_ARRAY_TASK_ID'));
 
-fprintf(1, 'cris_batch: year %d quintile %d node %d\n', year, taskid, nodeid);
+fprintf(1, 'airs_batch: year %d quintile %d node %d\n', year, taskid, nodeid);
 
 if ~(1 <= taskid & taskid <= 5)
   error('quintile index out of range')
@@ -31,24 +31,22 @@ switch(taskid)
 end
 
 % set the output filename 
-% tfile = sprintf('uwqc902y%dq%d', year, taskid);
-  tfile = sprintf('uwqc2500y%dq%d', year, taskid);
-% tfile = sprintf('cris902y%dq%d', year, taskid);
-% tfile = sprintf('cris2500y%dq%d', year, taskid);
+% tfile = sprintf('airs902y%dq%d', year, taskid);
+  tfile = sprintf('airs2500y%dq%d', year, taskid);
 
 opt1 = struct;
 
-% opt1.cdir = '/asl/data/cris/ccast/sdr60_hr';
+% opt1.adir = '/asl/data/airs/L1C';
 
-% opt1.iFOR = 15 : 16;       % 1 near nadir
-  opt1.iFOR =  1 : 30;       % 2 full scan
-% opt1.iFOR = [8 15 16 23];  % 3 near nadir plus half scan
-% opt1.iFOR = [8 23];        % 4 half scan only
-% opt1.iFOR = 13 : 18;       % 5 expanded nadir
+% opt1.ixt = 43 : 48;              % 1 near nadir
+  opt1.ixt =  1 : 90;              % 2 full scan
+% opt1.ixt = [21:23 43:48 68:70];  % 3 near nadir plus half scan
+% opt1.ixt = [21:23 68:70];        % 4 half scan only
+% opt1.ixt = 37 : 54;              % 5 expanded nadir
 
   opt1.v1 = 2450; opt1.v2 = 2550;  % SW Tb frequency span
 % opt1.v1 = 899;  opt1.v2 = 904;   % LW Tb frequency span
-  opt1.T1 = 320;  opt1.T2 = 360;   % obs selection span
+  opt1.T1 = 320;  opt1.T2 = 360;   % Tb bin span
 
-cris_obs_list(year, dlist, tfile, opt1)
+airs_obs_list(year, dlist, tfile, opt1)
 
