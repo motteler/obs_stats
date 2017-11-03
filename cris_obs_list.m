@@ -69,8 +69,8 @@ for di = dlist
 %   cfrq = d1.vLW(ixv);
 
     % load SW radiances
-%   d1 = load(afile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
-    d1 = load(afile, 'vSW', 'rSW', 'cSW', 'L1b_stat', 'L1a_err', 'geo');
+    d1 = load(afile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
+%   d1 = load(afile, 'vSW', 'rSW', 'cSW', 'L1b_stat', 'L1a_err', 'geo');
     ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
     rad = d1.rSW(ixv,:,iFOR,:);
     cfrq = d1.vSW(ixv);
@@ -79,14 +79,14 @@ for di = dlist
 %   iOK = ~d1.L1b_err(:,iFOR,:);
 
     % do our own error checking
-%   [eLW, eMW, eSW] = fixmyQC(d1.L1a_err, d1.L1b_stat);
+    [eLW, eMW, eSW] = fixmyQC(d1.L1a_err, d1.L1b_stat);
 %   iOK = ~eLW(:, iFOR, :);
-%   iOK = ~eSW(:, iFOR, :);
+    iOK = ~eSW(:, iFOR, :);
 
     % ccast QC with added UW imag resid check
 %   eUW = uw_qc_LW(d1.L1a_err, d1.L1b_stat, d1.vLW, d1.cLW);
-    eUW = uw_qc_SW(d1.L1a_err, d1.L1b_stat, d1.vSW, d1.cSW);
-    iOK = ~eUW(:, iFOR, :);
+%   eUW = uw_qc_SW(d1.L1a_err, d1.L1b_stat, d1.vSW, d1.cSW);
+%   iOK = ~eUW(:, iFOR, :);
 
     % radiance valid subset
     rad = rad(:,iOK);

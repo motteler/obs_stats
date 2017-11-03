@@ -32,9 +32,9 @@ end
 
 % set the output filename 
 % tfile = sprintf('uwqc902y%dq%d', year, taskid);
-  tfile = sprintf('uwqc2500y%dq%d', year, taskid);
+% tfile = sprintf('uwqc2500y%dq%d', year, taskid);
 % tfile = sprintf('cris902y%dq%d', year, taskid);
-% tfile = sprintf('cris2500y%dq%d', year, taskid);
+  tfile = sprintf('cris2500y%dq%d', year, taskid);
 
 opt1 = struct;
 

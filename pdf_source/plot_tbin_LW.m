@@ -2,10 +2,9 @@
 % plot_tbin - show results from airs_tbin and cris_tbin
 %
 
-% addpath pdf_test_360K
-  addpath pdf_test_land
+addpath pdf_test_360K
 
-year = 2015
+year = 2016
 
 a1 = load(sprintf('airs902y%dq1', year));
 a2 = load(sprintf('airs902y%dq2', year));

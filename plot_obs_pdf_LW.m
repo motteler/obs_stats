@@ -1,17 +1,72 @@
 %
-% plot_qc_diff - compare airs, cris, and cris with imag resid flag
+% plot_obs_tbin - pdfs from obs list
 %
 
 addpath obs_list_data
 addpath /asl/packages/ccast/motmsc/time
 
-a1 = quint_obs_cat('airs2500y2016q1');
-c1 = quint_obs_cat('cris2500y2016q1');
-d1 = quint_obs_cat('uwqc2500y2016q1');
+% total na/nc count normalization factor
+nf = 0.98;   % for 2016
+
+a2 = load('airs902y2016');
+a1.Tb  = a2.Tb_list;
+a1.lat = a2.lat_list;
+a1.lon = a2.lon_list;
+a1.tai = a2.tai_list;
+clear a2
+
+% a1 = quint_obs_cat('airs902y2016q1');
+c1 = quint_obs_cat('cris902y2016q1');
+d1 = quint_obs_cat('uwqc902y2016q1');
 
 na = length(a1.Tb)
 nc = length(c1.Tb)
 nd = length(d1.Tb)
+
+T1 = 320; T2 = 360;   % Tb bin span
+dT = 0.5;             % Tb bin step size
+
+% initialize Tb bins
+tind = T1 : dT : T2;
+tmid = tind + dT/2;
+nbin = length(tind);
+abin = zeros(nbin, 1);
+cbin = zeros(nbin, 1);
+dbin = zeros(nbin, 1);
+
+ix = floor((a1.Tb - T1) / dT) + 1;
+ix(ix < 1) = 1;
+ix(nbin < ix) = nbin;
+for i = 1 : length(ix)
+  abin(ix(i)) = abin(ix(i)) + 1;
+end
+
+ix = floor((c1.Tb - T1) / dT) + 1;
+ix(ix < 1) = 1;
+ix(nbin < ix) = nbin;
+for i = 1 : length(ix)
+  cbin(ix(i)) = cbin(ix(i)) + 1;
+end
+
+ix = floor((d1.Tb - T1) / dT) + 1;
+ix(ix < 1) = 1;
+ix(nbin < ix) = nbin;
+for i = 1 : length(ix)
+  dbin(ix(i)) = dbin(ix(i)) + 1;
+end
+
+figure(1); clf
+semilogy(tmid, abin, tmid, nf * cbin, tmid, nf * dbin, 'linewidth', 2)
+axis([330, 350, 0, 1e5])
+title('2016 new LW hot tails')
+legend('AIRS', 'CrIS ccast', 'CrIS uw imag')
+xlabel('Tb, K')
+ylabel('count')
+grid on
+
+saveas(gcf, 'new_2016_LW_hot_tails', 'png')
+
+return
 
 %----------------
 % hot histograms

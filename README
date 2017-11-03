@@ -1,14 +1,10 @@
 
 obs list tests
 ---------------
-
-These are similar to the PDF tests below.  They take parameters
-such as year, days, cross track index, and frequency and Tb sample
-spans, read every granule for the requested days, and build lists of
-selected obs.  Obs saved include Tb, lat, lon, time, solar zenith,
-and satellite zenith.
-
-  obs_list_data  - obs list data, mostly as quintiles
+They take parameters such as year, days, cross track index, and
+frequency and Tb sample spans, read every granule for the requested
+days, and build lists of selected obs.  Obs saved include Tb, lat,
+lon, time, solar zenith, and satellite zenith.
 
   airs_obs_list  - build list of selected AIRS obs
   cris_obs_list  - build list of selected CrIS obs
@@ -17,24 +13,30 @@ and satellite zenith.
   plot_hot_*     - assorted plot and test scripts
   uw_qc_*        - QC with UW omplex residual test
 
+  obs_list_data  - obs list data, mostly as quintiles
+
 PDF tests
 ----------
-The AIRS and CrIS tbin functions take parameters year, day list,
-cross track indices, frequency span, and (with in-line mods) ocean
-or land subsets.  They read every granule over the requested span
-and build tables of obs per Tb bin by day.
+The tbin or PDF functions take parameters year, day list, cross
+track indices, frequency span, and (with in-line mods) ocean or land
+subsets.  They read every granule over the requested span and build
+tables of obs per Tb bin by day.
 
-  airs_tbin  - tabulate AIRS Tb bins
-  cris_tbin  - tabulate CrIS Tb bins
-  airs_batch - batch driver for airs_tbin
-  cris_batch - batch driver for cris_tbin
-  plot_tbin  - compare AIRS and CrIS
-  plot_airs  - multi-year basic AIRS PDF stats
-  airs_pdfs  - multi-year AIRS moving-span PDFs
+  airs_tbin   - tabulate AIRS Tb bins
+  cris_tbin   - tabulate CrIS Tb bins
+  airs_batch  - batch driver for airs_tbin
+  cris_batch  - batch driver for cris_tbin
+  plot_tbin   - compare AIRS and CrIS
+  plot_airs   - multi-year basic AIRS PDF stats
+  airs_pdfs   - multi-year AIRS moving-span PDFs
+
+  pdf_test_*  - more recent tbin or PDF test data
+  airs_pdfs   - AIRS tbin data for 2002-2017, to 340K
+  cris_pdfs   - CrIS tbin data for 2015-2016, to 340K
 
 geo tests
 ----------
-See the README files in geo_test and geo_data
+See the README files in geo_source and geo_data
 
 functions
 -----------
