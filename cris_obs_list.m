@@ -62,26 +62,26 @@ for di = dlist
     afile = fullfile(ayear, doy, flist(fi).name);
 
     % load LW radiances
-%   d1 = load(afile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
+    d1 = load(afile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
 %   d1 = load(afile, 'vLW', 'rLW', 'cLW', 'L1b_stat', 'L1a_err', 'geo');
-%   ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
-%   rad = d1.rLW(ixv,:,iFOR,:);
-%   cfrq = d1.vLW(ixv);
+    ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
+    rad = d1.rLW(ixv,:,iFOR,:);
+    cfrq = d1.vLW(ixv);
 
     % load SW radiances
-    d1 = load(afile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
+%   d1 = load(afile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
 %   d1 = load(afile, 'vSW', 'rSW', 'cSW', 'L1b_stat', 'L1a_err', 'geo');
-    ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
-    rad = d1.rSW(ixv,:,iFOR,:);
-    cfrq = d1.vSW(ixv);
+%   ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
+%   rad = d1.rSW(ixv,:,iFOR,:);
+%   cfrq = d1.vSW(ixv);
 
     % use the SDR file L1b_err
 %   iOK = ~d1.L1b_err(:,iFOR,:);
 
     % do our own error checking
     [eLW, eMW, eSW] = fixmyQC(d1.L1a_err, d1.L1b_stat);
-%   iOK = ~eLW(:, iFOR, :);
-    iOK = ~eSW(:, iFOR, :);
+    iOK = ~eLW(:, iFOR, :);
+%   iOK = ~eSW(:, iFOR, :);
 
     % ccast QC with added UW imag resid check
 %   eUW = uw_qc_LW(d1.L1a_err, d1.L1b_stat, d1.vLW, d1.cLW);

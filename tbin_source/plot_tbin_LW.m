@@ -4,7 +4,7 @@
 
 addpath pdf_test_360K
 
-year = 2016
+year = 2015
 
 a1 = load(sprintf('airs902y%dq1', year));
 a2 = load(sprintf('airs902y%dq2', year));

@@ -10,17 +10,17 @@ lon, time, solar zenith, and satellite zenith.
   cris_obs_list  - build list of selected CrIS obs
   cris_obs_batch - batch wrapper for cris_obs_list
   airs_obs_batch - batch wrapper for airs_obs_list
-  plot_hot_*     - assorted plot and test scripts
+  plot_obs_*     - assorted plot and test scripts
   uw_qc_*        - QC with UW omplex residual test
 
   obs_list_data  - obs list data, mostly as quintiles
 
-PDF tests
-----------
+tbin tests
+-----------
 The tbin or PDF functions take parameters year, day list, cross
 track indices, frequency span, and (with in-line mods) ocean or land
 subsets.  They read every granule over the requested span and build
-tables of obs per Tb bin by day.
+tables of obs per Tb bin by day.   Scripts are in tbin_source.
 
   airs_tbin   - tabulate AIRS Tb bins
   cris_tbin   - tabulate CrIS Tb bins

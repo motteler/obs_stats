@@ -6,18 +6,13 @@ addpath obs_list_data
 addpath /asl/packages/ccast/motmsc/time
 
 % total na/nc count normalization factor
-nf = 0.98;   % for 2016
+% nf = 1;      % no scaling factor
+% nf = 0.98;   % for 2016
+  nf = 0.96;   % for 2015
 
-a2 = load('airs902y2016');
-a1.Tb  = a2.Tb_list;
-a1.lat = a2.lat_list;
-a1.lon = a2.lon_list;
-a1.tai = a2.tai_list;
-clear a2
-
-% a1 = quint_obs_cat('airs902y2016q1');
-c1 = quint_obs_cat('cris902y2016q1');
-d1 = quint_obs_cat('uwqc902y2016q1');
+a1 = quint_obs_cat('airs902y2015q1');
+c1 = quint_obs_cat('cris902y2015q1');
+d1 = quint_obs_cat('uwqc902y2015q1');
 
 na = length(a1.Tb)
 nc = length(c1.Tb)
@@ -58,13 +53,13 @@ end
 figure(1); clf
 semilogy(tmid, abin, tmid, nf * cbin, tmid, nf * dbin, 'linewidth', 2)
 axis([330, 350, 0, 1e5])
-title('2016 new LW hot tails')
+title('2015 new LW hot tails')
 legend('AIRS', 'CrIS ccast', 'CrIS uw imag')
 xlabel('Tb, K')
 ylabel('count')
 grid on
 
-saveas(gcf, 'new_2016_LW_hot_tails', 'png')
+% saveas(gcf, '2015_LW_hot_tails', 'png')
 
 return
 

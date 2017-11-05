@@ -31,8 +31,8 @@ switch(taskid)
 end
 
 % set the output filename 
-% tfile = sprintf('airs902y%dq%d', year, taskid);
-  tfile = sprintf('airs2500y%dq%d', year, taskid);
+  tfile = sprintf('airs902y%dq%d', year, taskid);
+% tfile = sprintf('airs2500y%dq%d', year, taskid);
 
 opt1 = struct;
 
@@ -44,8 +44,8 @@ opt1 = struct;
 % opt1.ixt = [21:23 68:70];        % 4 half scan only
 % opt1.ixt = 37 : 54;              % 5 expanded nadir
 
-  opt1.v1 = 2450; opt1.v2 = 2550;  % SW Tb frequency span
-% opt1.v1 = 899;  opt1.v2 = 904;   % LW Tb frequency span
+% opt1.v1 = 2450; opt1.v2 = 2550;  % SW Tb frequency span
+  opt1.v1 = 899;  opt1.v2 = 904;   % LW Tb frequency span
   opt1.T1 = 320;  opt1.T2 = 360;   % Tb bin span
 
 airs_obs_list(year, dlist, tfile, opt1)
