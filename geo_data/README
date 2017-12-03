@@ -1,9 +1,14 @@
 
-geo list tests; parallel AIRS and CrIS lat, lon, time,
-(and sometimes zenith or other relevant values) lists from parallel
-runs of airs_obsbin and cris_obsbin with corresponding parameters.
-Tabulations are typically saved as cris_obs_xxxx and airs_obs_xxxx,
-where xxxs is some combination of the test parameters below.
+geo test data, mainly from airs_geo_list.m and cris_geo_list.m.
+These scripts produce paired AIRS and CrIS files containing lists of
+latitude, longitude, time, solar zenith and satellite zenith values.
+The older files may lack some of the fields, and have the latitude
+subsetting weight set to 1.1.   The default value is now 1.0.
+
+airs_sol_d1s1w1.mat and cris_sol_d1s2w1.ma are a typical pair of
+these files.  "sol" means the file includes a solar zenith field, w1
+that the file was generated with the subsetting weight set to 1, and
+d1 and s2 are defined below.  
 
 % specify days of the year
 %   dlist = 111 : 126;  % d1, 2016 16 day all good

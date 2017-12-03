@@ -2,7 +2,7 @@
 % cris_geo_list -- geo list and bins for CrIS obs
 %
 
-addpath ./time
+addpath /asl/packages/ccast/motmsc/time
 
 % allgeo year prefix
 ghome = '/asl/data/cris/ccast/daily';
@@ -50,14 +50,14 @@ for doy = dlist
   d1 = load(geofile);
   tlat = d1.allgeo.Latitude(iFOV, iFOR, :);
   tlon = d1.allgeo.Longitude(iFOV, iFOR, :);
-% tzen = d1.allgeo.SatelliteZenithAngle(:, iFOR, :);
+  tzen = d1.allgeo.SatelliteZenithAngle(:, iFOR, :);
   tsol = d1.allgeo.SolarZenithAngle(:, iFOR, :);
   ttai = iet2tai(d1.allgeo.FORTime(iFOR, :));
   tasc = d1.allgeo.Asc_Desc_Flag;
 
   tlat = tlat(:);
   tlon = tlon(:);
-% tzen = tzen(:);
+  tzen = tzen(:);
   tsol = tsol(:);
   ttai = ones(nFOV,1) * ttai(:)';
   ttai = ttai(:);
@@ -66,7 +66,7 @@ for doy = dlist
 
   lat = [lat; tlat];
   lon = [lon; tlon];
-% zen = [zen; tzen];
+  zen = [zen; tzen];
   sol = [sol; tsol];
   tai = [tai; ttai];
   asc = [asc; tasc];
@@ -77,8 +77,8 @@ iOK = -90 <= lat & lat <= 90 & -180 <= lon & lon <= 180 & ...
       ~isnan(lat) & ~isnan(lon);
 lat = lat(iOK);
 lon = lon(iOK);
-% zen = zen(iOK);
-  sol = sol(iOK);
+zen = zen(iOK);
+sol = sol(iOK);
 tai = tai(iOK);
 asc = asc(iOK);
 
@@ -93,8 +93,8 @@ slat = lat(ix);
 slon = lon(ix);
 stai = tai(ix);
 sasc = asc(ix);
-% szen = zen(ix);
-  ssol = sol(ix);
+szen = zen(ix);
+ssol = sol(ix);
 nsub = numel(slat);
 fprintf(1, '%d obs after subset\n', nsub)
 
@@ -103,7 +103,7 @@ fprintf(1, '%d obs after subset\n', nsub)
 % slon = slon(~sasc);
 % stai = stai(~sasc);
 
-save cris_geo_xxxx year dlist iFOR iFOV nobs nsub slat slon stai ssol
+save cris_geo_xxxx year dlist iFOR iFOV nobs nsub slat slon stai szen ssol
 
 return
 

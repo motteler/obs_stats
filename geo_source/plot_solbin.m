@@ -2,16 +2,18 @@
 % plot_solbin - equal area solar zenith stats
 %
 
+addpath source
+addpath geo_data
+
 d1 = load('airs_sol_d1s2w1');
 d2 = load('cris_sol_d1s2w1');
 
+% subset by solar zenith angle
 j1 = d1.ssol < 70;
 j2 = d2.ssol < 70;
-
 slat1 = d1.slat(j1);
 slon1 = d1.slon(j1);
 ssol1 = d1.ssol(j1);
-
 slat2 = d2.slat(j2);
 slon2 = d2.slon(j2);
 ssol2 = d2.ssol(j2);

@@ -2,7 +2,7 @@
 % airs_geo_list -- geo list and bins for AIRS obs
 %
 
-addpath ./time
+addpath /asl/packages/ccast/motmsc/time
 
 % year and path to data
 ayear = '/asl/data/airs/L1C/2016';
@@ -43,26 +43,26 @@ for di = dlist
     tlat = hdfread(afile, 'Latitude');
     tlon = hdfread(afile, 'Longitude');
     ttai = airs2tai(hdfread(afile, 'Time'));
-%   tzen = hdfread(afile, 'satzen');
+    tzen = hdfread(afile, 'satzen');
     tsol = hdfread(afile, 'solzen');
 
     tlat = tlat(:, ixt);  tlat = tlat(:);
     tlon = tlon(:, ixt);  tlon = tlon(:);
     ttai = ttai(:, ixt);  ttai = ttai(:);
-%   tzen = tzen(:, ixt);  tzen = tzen(:);
+    tzen = tzen(:, ixt);  tzen = tzen(:);
     tsol = tsol(:, ixt);  tsol = tsol(:);
 
     iOK = -90 <= tlat & tlat <= 90 & -180 <= tlon & tlon <= 180;
     tlat = tlat(iOK); 
     tlon = tlon(iOK);
     ttai = ttai(iOK); 
-%   tzen = tzen(iOK);
+    tzen = tzen(iOK);
     tsol = tsol(iOK); 
 
     lat = [lat;, tlat];
     lon = [lon;, tlon];
     tai = [tai;, ttai];
-%   zen = [zen;, tzen];
+    zen = [zen;, tzen];
     sol = [sol;, tsol];
 
     if mod(fi, 10) == 0, fprintf(1, '.'), end
@@ -80,12 +80,12 @@ ix = rand(nobs, 1) < abs(cos(lat_rad).^w);
 slat = lat(ix);
 slon = lon(ix);
 stai = tai(ix);
-% szen = zen(ix);
-  ssol = sol(ix);
+szen = zen(ix);
+ssol = sol(ix);
 nsub = numel(slat);
 fprintf(1, '%d obs after subset\n', nsub)
 
-save airs_geo_xxxx ayear dlist ixt nobs nsub slat slon stai ssol
+save airs_geo_xxxx ayear dlist ixt nobs nsub slat slon stai szen ssol
 
 return
 
