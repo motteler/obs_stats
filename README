@@ -1,10 +1,11 @@
 
 obs list tests
 ---------------
-They take parameters such as year, days, cross track index, and
-frequency and Tb sample spans, read every granule for the requested
-days, and build lists of selected obs.  Obs saved include Tb, lat,
-lon, time, solar zenith, and satellite zenith.
+The obs list tests take parameters such as year, days, cross track
+index, and frequency and Tb sample spans, read every granule for the
+requested days, and build lists of selected obs.  Obs saved include
+Tb, lat, lon, time, solar zenith, and satellite zenith.  Scripts are
+in obs_list_source, data in obs_list_data.
 
   airs_obs_list  - build list of selected AIRS obs
   cris_obs_list  - build list of selected CrIS obs
@@ -20,7 +21,8 @@ tbin tests
 The tbin or PDF functions take parameters year, day list, cross
 track indices, frequency span, and (with in-line mods) ocean or land
 subsets.  They read every granule over the requested span and build
-tables of obs per Tb bin by day.   Scripts are in tbin_source.
+tables of obs per Tb bin by day.   Scripts are in tbin_source, data
+in airs_pdfs, cris_pdfs, and pdf_test_*.
 
   airs_tbin   - tabulate AIRS Tb bins
   cris_tbin   - tabulate CrIS Tb bins
