@@ -1,0 +1,107 @@
+==> airs_map_batch.m <==
+%
+% airs_map_batch - batch wrapper for airs_map_list
+%
+
+function airs_map_batch(year)
+
+addpath ./source
+addpath /asl/packages/ccast/source
+addpath /asl/packages/ccast/motmsc/time
+
+
+==> airs_map_list.m <==
+%
+% NAME
+%   airs_map_list - list selected AIRS obs
+%
+% SYNOPSIS
+%   airs_map_list(year, dlist, ofile, opt1)
+%
+% INPUTS
+%   year   - year, as an integer
+%   dlist  - list of days-of-the-year
+
+==> cris_map_list.m <==
+%
+% NAME
+%   cris_map_list - list selected CrIS obs
+%
+% SYNOPSIS
+%   cris_map_list(year, dlist, ofile, opt1)
+%
+% INPUTS
+%   year   - year, as an integer
+%   dlist  - list of days-of-the-year
+
+==> map_test1.m <==
+%
+% map_test1 - combine equal area Tb maps, do AIRS and CrIS diff
+%
+
+addpath source
+addpath map_data
+addpath /asl/packages/ccast/motmsc/time
+
+ctot = 0; csum = 0; 
+atot = 0; asum = 0;
+
+==> map_test2.m <==
+%
+% map_test2 - combine equal area Tb maps, do CrIS annual diffs
+%
+
+addpath source
+addpath map_data
+addpath /asl/packages/ccast/motmsc/time
+
+ctot = 0; csum = 0; 
+atot = 0; asum = 0;
+
+==> map_test3.m <==
+%
+% map_test3 - combine equal area Tb maps, double difference
+%
+
+addpath source
+addpath map_data
+addpath /asl/packages/ccast/motmsc/time
+
+year = 2016;
+ctot = 0; csum = 0; 
+
+==> map_test4.m <==
+%
+% map_test4 - combine equal area Tb maps, CrIS npp and n20 diffs
+%
+
+addpath source
+addpath map_data
+addpath /asl/packages/ccast/motmsc/time
+
+ctot = 0; csum = 0; 
+atot = 0; asum = 0;
+
+==> n20_map_batch.m <==
+%
+% n20_map_batch - batch wrapper for cris_map_list
+%
+
+function n20_map_batch(year)
+
+addpath ./source
+addpath /asl/packages/ccast/source
+addpath /asl/packages/ccast/motmsc/time
+
+
+==> npp_map_batch.m <==
+%
+% npp_map_batch - batch wrapper for cris_map_list
+%
+
+function npp_map_batch(year)
+
+addpath ./source
+addpath /asl/packages/ccast/source
+addpath /asl/packages/ccast/motmsc/time
+
