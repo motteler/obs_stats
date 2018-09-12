@@ -11,7 +11,8 @@
 %   ofile  - save file for obs lists
 %
 % DISCUSSION
-%   this is just cris_obs_list.m with different options
+%   mostly just cris_obs_list.m with different options
+%   see cris_geo_list.m if we need to add FOV subsetting
 %
 % AUTHOR
 %  H. Motteler, 3 July 2017
@@ -22,8 +23,10 @@ function cris_map_list(year, dlist, ofile, opt1)
 % default params 
 cdir = '/asl/data/cris/ccast/sdr60_npp_HR';   % path to CrIS data
 iFOR =  1 : 30;       % full scans
+iFOV =  1 : 9;        % all FOVs
 v1 = 899; v2 = 904;   % Tb frequency span
 T1 = 160; T2 = 360;   % save obs if T1 <= Tb <= T2
+nLat = 24; dLon = 4;  % equal area bin spec
 
 % process input options
 if nargin == 4
@@ -33,12 +36,18 @@ if nargin == 4
   if isfield(opt1, 'v2'),   v2   = opt1.v2; end
   if isfield(opt1, 'T1'),   T1   = opt1.T1; end
   if isfield(opt1, 'T2'),   T2   = opt1.T2; end
+  if isfield(opt1, 'nLat'), nLat = opt1.nLat; end
+  if isfield(opt1, 'dLon'), dLon = opt1.dLon; end
 else
   opt1 = struct;
 end
 
+% FOV and FOR count
+nFOR = length(iFOR);
+nFOV = length(iFOV);
+
 % path to CrIS data, including year
-ayear = fullfile(cdir, sprintf('%d', year));
+cyear = fullfile(cdir, sprintf('%d', year));
 
 % initialize obs lists
 Tb_list = [];
@@ -47,6 +56,8 @@ lon_list = [];
 tai_list = [];
 zen_list = [];
 sol_list = [];
+asc_list = logical([]);
+fov_list = [];
 
 % loop on days of the year
 for di = dlist
@@ -54,24 +65,24 @@ for di = dlist
   % loop on CrIS granules
   doy = sprintf('%03d', di);
   fprintf(1, 'doy %s ', doy)
-  flist = dir(fullfile(ayear, doy, 'SDR*.mat'));
+  flist = dir(fullfile(cyear, doy, '*SDR*.mat'));
 
   for fi = 1 : length(flist);
 
     if mod(fi, 10) == 0, fprintf(1, '.'), end
 
-    afile = fullfile(ayear, doy, flist(fi).name);
+    cfile = fullfile(cyear, doy, flist(fi).name);
 
     % load LW radiances
-    d1 = load(afile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
-%   d1 = load(afile, 'vLW', 'rLW', 'cLW', 'L1b_stat', 'L1a_err', 'geo');
+    d1 = load(cfile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
+%   d1 = load(cfile, 'vLW', 'rLW', 'cLW', 'L1b_stat', 'L1a_err', 'geo');
     ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
     rad = d1.rLW(ixv,:,iFOR,:);
     cfrq = d1.vLW(ixv);
 
     % load SW radiances
-%   d1 = load(afile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
-%   d1 = load(afile, 'vSW', 'rSW', 'cSW', 'L1b_stat', 'L1a_err', 'geo');
+%   d1 = load(cfile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
+%   d1 = load(cfile, 'vSW', 'rSW', 'cSW', 'L1b_stat', 'L1a_err', 'geo');
 %   ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
 %   rad = d1.rSW(ixv,:,iFOR,:);
 %   cfrq = d1.vSW(ixv);
@@ -96,21 +107,41 @@ for di = dlist
     lat = d1.geo.Latitude(:,iFOR,:);
     lon = d1.geo.Longitude(:,iFOR,:);
     tai = iet2tai(d1.geo.FORTime(iFOR, :));
-%   zen = d1.geo.SatelliteZenithAngle(:, iFOR, :);
-%   sol = d1.geo.SolarZenithAngle(:, iFOR, :);
+    zen = d1.geo.SatelliteZenithAngle(:, iFOR, :);
+    sol = d1.geo.SolarZenithAngle(:, iFOR, :);
+    asc = d1.geo.Asc_Desc_Flag;
 
-    % extend tai from 30 x 60 to 9 x 30 x 60
+    % extend tai from m x n to 9 x m x n
     [m,n] = size(tai);    
-    tai = reshape(ones(9,1)*tai(:)', 9, m, n);
+    tai = reshape(ones(nFOV,1)*tai(:)', 9, m, n);
 
-    % FOV subsetting goes here
+    % extend asc from n to 9 x m x n
+    asc = reshape(ones(nFOV*nFOR,1)*asc(:)', 9, m, n);
+
+    % add a fov index
+    fov = reshape((1:9)' * ones(1,m*n), 9, m, n);
 
     % geo valid subset
     lat = lat(iOK);
     lon = lon(iOK);
     tai = tai(iOK);
-%   zen = zen(iOK);
-%   sol = sol(iOK);
+    zen = zen(iOK);
+    sol = sol(iOK);
+    asc = asc(iOK);
+    fov = fov(iOK);
+
+    % geo QC (we shouldn't need this, but...)
+    gOK = -90 <= lat & lat <=  90 & ...
+         -180 <= lon & lon <= 180 & ...
+         ~isnan(asc);
+    rad = rad(:,gOK);
+    lat = lat(gOK);
+    lon = lon(gOK);
+    tai = tai(gOK);
+    zen = zen(gOK);
+    sol = sol(gOK);
+    asc = logical(asc(gOK));
+    fov = single(fov(gOK));
 
     % latitude subsample
     lat_rad = deg2rad(lat);
@@ -120,8 +151,10 @@ for di = dlist
     lat = lat(jx);
     lon = lon(jx);
     tai = tai(jx);
-%   zen = zen(jx);
-%   sol = sol(jx);
+    zen = zen(jx);
+    sol = sol(jx);
+    asc = asc(jx);
+    fov = fov(jx);
 
 %   % land or ocean subsets
 %   [~, landfrac] = usgs_deg10_dem(lat', lon');
@@ -141,18 +174,29 @@ for di = dlist
     if isempty(ihot), continue, end
 
     % add hot obs to lists
-    Tb_list = [Tb_list; single(rmsTb(ihot))];
-    lat_list = [lat_list; single(lat(ihot))];
-    lon_list = [lon_list; single(lon(ihot))];
-    tai_list = [tai_list; single(tai(ihot))];
-%   zen_list = [zen_list; zen(ihot)];
-%   sol_list = [sol_list; sol(ihot)];
+    Tb_list = [Tb_list; rmsTb(ihot)];
+    lat_list = [lat_list; lat(ihot)];
+    lon_list = [lon_list; lon(ihot)];
+    tai_list = [tai_list; tai(ihot)];
+    zen_list = [zen_list; zen(ihot)];
+    sol_list = [sol_list; sol(ihot)];
+    asc_list = [asc_list; asc(ihot)];
+    fov_list = [fov_list; fov(ihot)];
 
   end % loop on granules
   fprintf(1, '\n')
 end % loop on days
 
-save(ofile, 'year', 'dlist', 'cdir', 'iFOR', 'v1', 'v2', ...
-            'T1', 'T2', 'cfrq', 'Tb_list', 'lat_list', ...
-             'lon_list', 'tai_list', 'zen_list', 'sol_list');
-
+save(ofile, 'year', 'dlist', 'cdir', 'iFOR', 'v1', 'v2', 'T1', 'T2', ...
+            'cfrq', 'Tb_list', 'lat_list', 'lon_list', 'fov_list', ...
+            'tai_list', 'zen_list', 'sol_list', 'asc_list');
+%
+% clear rad
+% 
+% [latB1, lonB1, gtot1, gavg1] = ...
+%     equal_area_bins(nLat, dLon, lat_list, lon_list, Tb_list);
+% 
+% save(ofile, 'year', 'dlist', 'cdir', 'iFOR', 'v1', 'v2', ...
+%             'T1', 'T2', 'cfrq', 'nLat', 'dLon', 'latB1', 'lonB1', ...
+%             'gtot1', 'gavg1')
+% 

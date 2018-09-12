@@ -4,7 +4,7 @@
 
 function n20_map_batch(year)
 
-addpath ./source
+addpath ../source
 addpath /asl/packages/ccast/source
 addpath /asl/packages/ccast/motmsc/time
 
@@ -30,11 +30,11 @@ if dlist(end) > yend
 end
 
 % set the output filename 
-tfile = sprintf('n20_902y%ds%0.2d', year, taskid);
+tfile = sprintf('N20_902y%ds%0.2d', year, taskid);
 
 opt1 = struct;
 
-  opt1.cdir = '/asl/data/cris/ccast/sdr45_j01_LR';
+  opt1.cdir = '/asl/data/cris/ccast/sdr45_j01_HR';
 
 % opt1.iFOR = 15 : 16;       % 1 near nadir
   opt1.iFOR =  1 : 30;       % 2 full scan

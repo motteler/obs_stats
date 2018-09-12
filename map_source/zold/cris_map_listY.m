@@ -12,9 +12,7 @@
 %
 % DISCUSSION
 %   mostly just cris_obs_list.m with different options
-%
-%   subsetting data here gives smaller obs lists but less
-%   flexibility for downstream analysis
+%   see cris_geo_list.m if we need to add FOV subsetting
 %
 % AUTHOR
 %  H. Motteler, 3 July 2017
@@ -26,23 +24,20 @@ function cris_map_list(year, dlist, ofile, opt1)
 cdir = '/asl/data/cris/ccast/sdr60_npp_HR';   % path to CrIS data
 iFOR =  1 : 30;       % full scans
 iFOV =  1 : 9;        % all FOVs
-v1 = 899; v2 = 904;   % Tb window frequency span
+v1 = 899; v2 = 904;   % Tb frequency span
 T1 = 160; T2 = 360;   % save obs if T1 <= Tb <= T2
 nLat = 24; dLon = 4;  % equal area bin spec
-band = 'LW';          % default LW band        
 
 % process input options
 if nargin == 4
   if isfield(opt1, 'cdir'), cdir = opt1.cdir; end
   if isfield(opt1, 'iFOR'), iFOR = opt1.iFOR; end
-  if isfield(opt1, 'iFOV'), iFOV = opt1.iFOV; end
   if isfield(opt1, 'v1'),   v1   = opt1.v1; end
   if isfield(opt1, 'v2'),   v2   = opt1.v2; end
   if isfield(opt1, 'T1'),   T1   = opt1.T1; end
   if isfield(opt1, 'T2'),   T2   = opt1.T2; end
   if isfield(opt1, 'nLat'), nLat = opt1.nLat; end
   if isfield(opt1, 'dLon'), dLon = opt1.dLon; end
-  if isfield(opt1, 'band'), band = opt1.band; end
 else
   opt1 = struct;
 end
@@ -78,35 +73,15 @@ for di = dlist
 
     cfile = fullfile(cyear, doy, flist(fi).name);
 
-    % load radiances
-    switch (band)
-      case 'LW'
-        d1 = load(cfile, 'vLW', 'rLW', 'L1b_stat', 'L1a_err', 'geo');
-        ixv = find(v1 <= d1.vLW & d1.vLW <=v2);
-        rad = d1.rLW(ixv,:,iFOR,:);
-        cfrq = d1.vLW(ixv);
-      case 'MW'
-        d1 = load(cfile, 'vMW', 'rMW', 'L1b_stat', 'L1a_err', 'geo');
-        ixv = find(v1 <= d1.vMW & d1.vMW <=v2);
-        rad = d1.rMW(ixv,:,iFOR,:);
-        cfrq = d1.vMW(ixv);
-      case 'SW'
-        d1 = load(cfile, 'vSW', 'rSW', 'L1b_stat', 'L1a_err', 'geo');
-        ixv = find(v1 <= d1.vSW & d1.vSW <=v2);
-        rad = d1.rSW(ixv,:,iFOR,:);
-        cfrq = d1.vSW(ixv);
-    end
-
-    % use the SDR file L1b_err
-%   iOK = ~d1.L1b_err(:,iFOR,:);
+    % load MW radiances
+    d1 = load(cfile, 'vMW', 'rMW', 'L1b_stat', 'L1a_err', 'geo');
+    ixv = find(v1 <= d1.vMW & d1.vMW <=v2);
+    rad = d1.rMW(ixv,:,iFOR,:);
+    cfrq = d1.vMW(ixv);
 
     % do our own error checking
     [eLW, eMW, eSW] = fixmyQC(d1.L1a_err, d1.L1b_stat);
-    switch (band)
-      case 'LW', iOK = ~eLW(:, iFOR, :);
-      case 'MW', iOK = ~eMW(:, iFOR, :);
-      case 'SW', iOK = ~eSW(:, iFOR, :);
-    end
+    iOK = ~eMW(:, iFOR, :);
 
     % radiance valid subset
     rad = rad(:,iOK);
@@ -151,7 +126,7 @@ for di = dlist
     asc = logical(asc(gOK));
     fov = single(fov(gOK));
 
-    % latitude weighted subset
+    % latitude subsample
     lat_rad = deg2rad(lat);
     [m,n] = size(lat_rad);
     jx = rand(m, n) < abs(cos(lat_rad));
@@ -172,35 +147,32 @@ for di = dlist
 %   rad = rad(:, land);
 %   if isempty(rad), continue, end
 
-    % get window span rms BT
+    % get window span rms Tb
     Tb = real(rad2bt(cfrq, rad));
     rmsTb = rms(Tb, 1);
     rmsTb = rmsTb(:);
 
-    % check BT range
-    tOK = find(T1 <= rmsTb & rmsTb <= T2);
-    if isempty(tOK), continue, end
+    % check for a hot subset
+    ihot = find(T1 <= rmsTb & rmsTb <= T2);
+    if isempty(ihot), continue, end
 
-    % build the obs lists
-    Tb_list = [Tb_list; rmsTb(tOK)];
-    lat_list = [lat_list; lat(tOK)];
-    lon_list = [lon_list; lon(tOK)];
-    tai_list = [tai_list; tai(tOK)];
-    zen_list = [zen_list; zen(tOK)];
-    sol_list = [sol_list; sol(tOK)];
-    asc_list = [asc_list; asc(tOK)];
-    fov_list = [fov_list; fov(tOK)];
+    % add hot obs to lists
+    Tb_list = [Tb_list; rmsTb(ihot)];
+    lat_list = [lat_list; lat(ihot)];
+    lon_list = [lon_list; lon(ihot)];
+    tai_list = [tai_list; tai(ihot)];
+    zen_list = [zen_list; zen(ihot)];
+    sol_list = [sol_list; sol(ihot)];
+    asc_list = [asc_list; asc(ihot)];
+    fov_list = [fov_list; fov(ihot)];
 
   end % loop on granules
   fprintf(1, '\n')
 end % loop on days
 
-% save the full obs list
 save(ofile, 'year', 'dlist', 'cdir', 'iFOR', 'v1', 'v2', 'T1', 'T2', ...
-            'cfrq', 'Tb_list', 'lat_list', 'lon_list', 'tai_list', ...
-             'tai_list', 'zen_list', 'sol_list', 'asc_list', 'fov_list');
-
-% save an equal area map
+            'cfrq', 'Tb_list', 'lat_list', 'lon_list', 'fov_list', ...
+            'tai_list', 'zen_list', 'sol_list', 'asc_list');
 %
 % clear rad
 % 

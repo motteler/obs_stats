@@ -4,7 +4,7 @@
 
 function airs_map_batch(year)
 
-addpath ./source
+addpath ../source
 addpath /asl/packages/ccast/source
 addpath /asl/packages/ccast/motmsc/time
 

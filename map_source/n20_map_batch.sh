@@ -10,8 +10,10 @@
 #SBATCH --qos=medium_prod
 #SBATCH --account=pi_strow
 #SBATCH --mem-per-cpu=16000
+#SBATCH --array=4
+# #SBATCH --array=13-15
+# #SBATCH --array=5-12%4
 # #SBATCH --array=1-23%5
-#SBATCH --array=3-9%4
 
 # new bad node list
 # #SBATCH --exclude=n11,n71

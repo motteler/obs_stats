@@ -11,7 +11,7 @@
 %   ofile  - save file for obs lists
 %
 % DISCUSSION
-%   this is just airs_obs_list.m with different options
+%   mostly just airs_obs_list.m with different options
 %
 % AUTHOR
 %  H. Motteler, 3 July 2017
@@ -55,6 +55,7 @@ lon_list = [];
 tai_list = [];
 zen_list = [];
 sol_list = [];
+asc_list = logical([]);
 
 % loop on days of the year
 for di = dlist
@@ -82,16 +83,16 @@ for di = dlist
     % read geo data, 90 x 135
     lat = hdfread(afile, 'Latitude');
     lon = hdfread(afile, 'Longitude');
-%   tai = airs2tai(hdfread(afile, 'Time'));
-%   zen = hdfread(afile, 'satzen');
-%   sol = hdfread(afile, 'solzen');
+    tai = airs2tai(hdfread(afile, 'Time'));
+    zen = hdfread(afile, 'satzen');
+    sol = hdfread(afile, 'solzen');
 
     % cross track subset and transpose
     lat = lat(:,ixt); lat = permute(lat, [2,1]);
     lon = lon(:,ixt); lon = permute(lon, [2,1]);
-%   tai = tai(:,ixt); tai = permute(tai, [2,1]);
-%   zen = zen(:,ixt); zen = permute(zen, [2,1]);
-%   sol = sol(:,ixt); sol = permute(sol, [2,1]);
+    tai = tai(:,ixt); tai = permute(tai, [2,1]);
+    zen = zen(:,ixt); zen = permute(zen, [2,1]);
+    sol = sol(:,ixt); sol = permute(sol, [2,1]);
 
     % typical values
     %  lat     90x135   97200  double
@@ -111,9 +112,9 @@ for di = dlist
     rad = rad(:,jx);
     lat = lat(jx);
     lon = lon(jx);
-%   tai = tai(jx);
-%   zen = zen(jx);
-%   sol = sol(jx);
+    tai = tai(jx);
+    zen = zen(jx);
+    sol = sol(jx);
     if isempty(lat), continue, end
 
     % typical values
@@ -142,24 +143,26 @@ for di = dlist
     Tb_list = [Tb_list; rmsTb(ihot)];
     lat_list = [lat_list; lat(ihot)];
     lon_list = [lon_list; lon(ihot)];
-%   tai_list = [tai_list; tai(ihot)];
-%   zen_list = [zen_list; zen(ihot)];
-%   sol_list = [sol_list; sol(ihot)];
+    tai_list = [tai_list; tai(ihot)];
+    zen_list = [zen_list; zen(ihot)];
+    sol_list = [sol_list; sol(ihot)];
 
   end % loop on granules
   fprintf(1, '\n')
 end % loop on days
 
-% save(ofile, 'year', 'dlist', 'adir', 'ixt', 'v1', 'v2', ...
-%              'T1', 'T2', 'afrq', 'Tb_list', 'lat_list', ...
-%              'lon_list', 'tai_list', 'zen_list', 'sol_list');
-
-clear rad
-
-[latB1, lonB1, gtot1, gavg1] = ...
-    equal_area_bins(nLat, dLon, lat_list, lon_list, Tb_list);
-
 save(ofile, 'year', 'dlist', 'adir', 'ixt', 'v1', 'v2', ...
-            'T1', 'T2', 'afrq', 'nLat', 'dLon', 'latB1', 'lonB1', ...
-            'gtot1', 'gavg1') 
+             'T1', 'T2', 'afrq', 'Tb_list', 'lat_list', ...
+             'lon_list', 'tai_list', 'zen_list', 'sol_list');
 
+% save an equal area map
+%
+% clear rad
+% 
+% [latB1, lonB1, gtot1, gavg1] = ...
+%     equal_area_bins(nLat, dLon, lat_list, lon_list, Tb_list);
+% 
+% save(ofile, 'year', 'dlist', 'adir', 'ixt', 'v1', 'v2', ...
+%             'T1', 'T2', 'afrq', 'nLat', 'dLon', 'latB1', 'lonB1', ...
+%             'gtot1', 'gavg1') 
+%

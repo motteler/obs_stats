@@ -3,8 +3,9 @@
 %
 
 addpath source
-addpath map_data
+addpath map_source
 addpath /asl/packages/ccast/motmsc/time
+addpath map_data
 
 ctot = 0; csum = 0; 
 atot = 0; asum = 0;
@@ -29,17 +30,17 @@ aavg = asum ./ atot;
 cavg = csum ./ ctot;
 
 cax = [-4, 4];
-tstr = 'CrIS N20 minus NPP equal area Tb bins, %d doy %d-%d';
+tstr = 'CrIS J1 minus NPP equal area Tb bins, %d doy %d-%d';
 tstr = sprintf(tstr, a1.year, dlist(1), dlist(end));
-equal_area_map(3, c1.latB1, c1.lonB1, aavg - cavg, tstr, cax);
+equal_area_map(1, c1.latB1, c1.lonB1, aavg - cavg, tstr, cax);
 
 return
 
 tstr = 'AIRS %d mean equal area Tb bins';
 tstr = sprintf(tstr, a1.year);
-equal_area_map(1, a1.latB1, a1.lonB1, aavg, tstr);
+equal_area_map(2, a1.latB1, a1.lonB1, aavg, tstr);
 
 tstr = 'CrIS %d mean equal area Tb bins';
 tstr = sprintf(tstr, c1.year);
-equal_area_map(2, c1.latB1, c1.lonB1, cavg, tstr);
+equal_area_map(3, c1.latB1, c1.lonB1, cavg, tstr);
 
