@@ -1,30 +1,16 @@
 
-map tests
-----------
-The map test scripts take parameters such as year, days, cross track
-index, frequency, and Tb range, read every granule for the requested
-days, build lists of selected obs, and then equal area maps from the
-lists.  The batch scripts are set up to do multiple 16 day maps.  The
-map_test* scripts combine these 16-day sets in various ways.  Source
-is in map_source and data in map_data.
+obs_16day_source
+-----------------
+take a channel set, read every granule for the requested days,
+build lists of selected obs, and then equal area maps from the
+lists.  The batch scripts are set up to do multiple 16 day maps.
+The map_test* scripts combine these 16-day sets in various ways.
+See the README there for more info.
 
-  airs_map_list - equal area maps from selected AIRS obs
-  cris_map_list - equal area maps from selected CrIS obs
+obs_list_source
+----------------
 
-  airs_map_batch - batch wrapper for airs_map_list
-  n20_map_batch - batch wrapper for cris_map_list
-  npp_map_batch - batch wrapper for cris_map_list
-
-  map_test1 - combine equal area Tb maps, do AIRS and CrIS diff
-  map_test2 - combine equal area Tb maps, do CrIS annual diffs
-  map_test3 - combine equal area Tb maps, double difference
-  map_test4 - combine equal area Tb maps, CrIS npp and n20 diffs
-
-  map_data  - equal area map data, mostly as 16-day sets
-
-obs list tests
----------------
-The obs list tests take parameters such as year, days, cross track
+These scripts take parameters such as year, days, cross track
 index, and frequency and Tb sample spans, read every granule for the
 requested days, and build lists of selected obs.  Obs saved include
 Tb, lat, lon, time, solar zenith, and satellite zenith.  Scripts are

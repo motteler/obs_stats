@@ -74,7 +74,7 @@ for di = dlist
     try
       rad = hdfread(afile, 'radiances');
     catch
-      fprintf(1, '\nairs_tbin: bad file %s', afile)
+      fprintf(1, '\nairs_map_list: bad file %s', afile)
       continue
     end
     rad = rad(:, ixt, ixv);        % cross track and channel subset

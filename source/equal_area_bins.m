@@ -58,18 +58,12 @@ gavg = zeros(mlat, nlon);  % obs means with pcolor buffer
 for i = 1 : nobs
 
   % latitude bin index
-  if lat(i) == 90
-    ilat = mlat;
-  else
-    ilat = find(lat(i) < latB, 1) - 1;
-  end
+  ilat = find(lat(i) < latB, 1) - 1;
+  if ilat > mlat, ilat == mlat; end
 
   % longitude bin index
-  if lon(i) == 180
-    ilon = nlon;
-  else
-    ilon = floor((lon(i) - lonB(1)) / dLon) + 1;
-  end
+  ilon = floor((lon(i) - lonB(1)) / dLon) + 1;
+  if ilon > nlon, ilon = nlon; end
 
   % check for valid ranges
   if 1 <= ilat & ilat <= mlat & 1 <= ilon & ilon <= nlon;
