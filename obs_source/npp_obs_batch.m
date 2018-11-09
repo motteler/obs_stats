@@ -1,8 +1,8 @@
 %
-% npp_map_batch - batch wrapper for cris_map_list
+% npp_obs_batch - batch wrapper for cris_obs_list
 %
 
-function npp_map_batch(year)
+function npp_obs_batch(year)
 
 addpath ../source
 addpath /asl/packages/ccast/source
@@ -46,5 +46,5 @@ opt1 = struct;
   opt1.v1 = 899;  opt1.v2 = 904;   % LW Tb frequency span
   opt1.T1 = 160;  opt1.T2 = 360;   % Tb selection span
 
-cris_map_list(year, dlist, tfile, opt1)
+cris_obs_list(year, dlist, tfile, opt1)
 

@@ -3,7 +3,7 @@
 %   equal_area_bins - count and mean for equal area trapezoids
 %
 % SYNOPSIS
-%   [latB, lonB, gtot, gavg] = ...
+%   [latB, lonB, gtot, gavg, gsqr] = ...
 %          equal_area_bins(nLat, dLon, lat, lon, obs)
 %
 % INPUTS
@@ -18,13 +18,14 @@
 %   lonB  - n+1 vector, longitude bin boundaries
 %   gtot  - m x n array, obs counts
 %   gavg  - m x n array, obs means
+%   gsqr  - m x n array, obs^2 means
 %
 % DISCUSSION
 %   equal_area_bins takes a list of lat, lon, and data values and
 %   returns count and mean for equal area bins.  Data values and
-%   means are optional.  The bins are trapezoide obtained by slicing
-%   up equal area latitude bands, with pie-shaped wedges at the
-%   poles.
+%   means are optional.  The bins are trapezoids obtained by slicing
+%   up equal area latitude bands, which gives pie-shaped wedges at
+%   the poles.
 %
 %   The grid for the bins is specified with nLat, the number of
 %   latitude bands from equator to the pole, and dLon, the longitude
@@ -35,7 +36,7 @@
 %  H.  Motteler, 20 June 2017
 %
 
-function [latB, lonB, gtot, gavg] = ...
+function [latB, lonB, gtot, gavg, gsqr] = ...
           equal_area_bins(nLat, dLon, lat, lon, obs)
 
 nobs = length(lat);
@@ -52,9 +53,11 @@ lonB = -180 : dLon : 180;
 
 mlat = length(latB) - 1;   % number of latitude bands
 nlon = length(lonB) - 1;   % number of longitude bands
-gtot = zeros(mlat, nlon);  % obs counts with pcolor buffer
-gavg = zeros(mlat, nlon);  % obs means with pcolor buffer
+gtot = zeros(mlat, nlon);  % binned obs count
+gavg = zeros(mlat, nlon);  % binned obs mean
+gsqr = zeros(mlat, nlon);  % binned mean of obs^2
 
+% loop on [lat,lon,obs] values
 for i = 1 : nobs
 
   % latitude bin index
@@ -69,6 +72,7 @@ for i = 1 : nobs
   if 1 <= ilat & ilat <= mlat & 1 <= ilon & ilon <= nlon;
     gtot(ilat, ilon) = gtot(ilat, ilon) + 1;
     gavg(ilat, ilon) = gavg(ilat, ilon) + obs(i);
+    gsqr(ilat, ilon) = gsqr(ilat, ilon) + obs(i) * obs(i);
   else
     [ilat, ilon]
     error('latitude or longitude index out of range')
@@ -78,6 +82,7 @@ for i = 1 : nobs
 end
 % fprintf(1, '\n')
 
-% take the mean 
+% take the means
 gavg = gavg ./ gtot;
+gsqr = gsqr ./ gsqr;
 

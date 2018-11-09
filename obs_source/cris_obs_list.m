@@ -1,9 +1,9 @@
 %
 % NAME
-%   cris_map_list - list selected CrIS obs
+%   cris_obs_list - list selected CrIS obs
 %
 % SYNOPSIS
-%   cris_map_list(year, dlist, ofile, opt1)
+%   cris_obs_list(year, dlist, ofile, opt1)
 %
 % INPUTS
 %   year   - year, as an integer
@@ -20,7 +20,7 @@
 %  H. Motteler, 3 July 2017
 %
 
-function cris_map_list(year, dlist, ofile, opt1)
+function cris_obs_list(year, dlist, ofile, opt1)
 
 % default params 
 cdir = '/asl/data/cris/ccast/sdr60_npp_HR';   % path to CrIS data

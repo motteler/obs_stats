@@ -1,9 +1,9 @@
 %
 % NAME
-%   airs_map_list - list selected AIRS obs
+%   airs_obs_list - list selected AIRS obs
 %
 % SYNOPSIS
-%   airs_map_list(year, dlist, ofile, opt1)
+%   airs_obs_list(year, dlist, ofile, opt1)
 %
 % INPUTS
 %   year   - year, as an integer
@@ -11,19 +11,19 @@
 %   ofile  - save file for obs lists
 %
 % DISCUSSION
-%   mostly just airs_obs_list.m with different options
+%   uses channel list rather than window span
 %
 % AUTHOR
 %  H. Motteler, 3 July 2017
 %
 
-function airs_map_list(year, dlist, ofile, opt1)
+function airs_obs_list(year, dlist, ofile, opt1)
 
 % default params 
 adir = '/asl/data/airs/L1C';   % path to AIRS data
 ixt = 1 : 90;                  % full scans
 
-% default frequency list (window channels)
+% default frequency list (LW and SW windows)
 vlist = [902.040, 902.387, 2499.533, 2500.601];
 
 % process input options

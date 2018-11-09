@@ -3,18 +3,20 @@ obs_16day_source
 -----------------
 take a channel set, read every granule for the requested days,
 build lists of selected obs, and then equal area maps from the
-lists.  The batch scripts are set up to do multiple 16 day maps.
-The map_test* scripts combine these 16-day sets in various ways.
-See the README there for more info.
+lists.  The batch scripts are set up to do multiple 16-day sets.
+Scripts airs_bt_map, cris_bt_map, airs_obs_map, cris_obs_map all
+loop on the 16-day sets and build maps, and airs_stat_map loops
+on 16-day sets and builds a summary set for further processing.
+The map_test scripts work from an earlier form of 16-day maps.
+See README there for more info.
 
-obs_list_source
+obs_quint_source
 ----------------
-
-These scripts take parameters such as year, days, cross track
-index, and frequency and Tb sample spans, read every granule for the
-requested days, and build lists of selected obs.  Obs saved include
-Tb, lat, lon, time, solar zenith, and satellite zenith.  Scripts are
-in obs_list_source, data in obs_list_data.
+take parameters such as frequency, cross track index, and Tb sample
+spans, read every granule for the requested days, and build lists of
+selected obs.  Obs saved include Tb, lat, lon, time, solar zenith,
+and satellite zenith.  Scripts are in obs_quint_source and data in
+obs_quint_data.
 
   airs_obs_list  - build list of selected AIRS obs
   cris_obs_list  - build list of selected CrIS obs
@@ -23,7 +25,7 @@ in obs_list_source, data in obs_list_data.
   plot_obs_*     - assorted plot and test scripts
   uw_qc_*        - QC with UW omplex residual test
 
-  obs_list_data  - obs list data, mostly as quintiles
+  obs_quint_data  - obs list data, mostly as quintiles
 
 tbin tests
 -----------

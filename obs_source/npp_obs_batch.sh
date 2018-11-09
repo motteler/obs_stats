@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# usage: sbatch n20_map_batch.sh <year>
+# usage: sbatch npp_obs_batch.sh <year>
 #
 
 # sbatch options
-#SBATCH --job-name=n20_map
-#SBATCH --output=n20_%A_%a.out
+#SBATCH --job-name=npp_obs
+#SBATCH --output=npp_%A_%a.out
 #SBATCH --partition=batch
 #SBATCH --qos=medium_prod
 #SBATCH --account=pi_strow
@@ -22,5 +22,5 @@
 MATLAB=/usr/cluster/matlab/2016a/bin/matlab
 MATOPT='-nojvm -nodisplay -nosplash'
 
-srun $MATLAB $MATOPT -r "n20_map_batch($1); exit"
+srun $MATLAB $MATOPT -r "npp_obs_batch($1); exit"
 
