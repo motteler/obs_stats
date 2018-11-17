@@ -1,12 +1,10 @@
 %
-% airs_obs_map - equal area obs stats for AIRS and J1
+% airs_n20_cnt_map - compare AIRS and NPP equal area obs counts
 %
 
 addpath ../source
-addpath ../map_source
-addpath /asl/packages/ccast/motmsc/time
 addpath /asl/packages/ccast/motmsc/utils
-addpath ../map_data2
+addpath ../obs_16day_mix_v1
 
 nLat = 24;  dLon = 4;
 

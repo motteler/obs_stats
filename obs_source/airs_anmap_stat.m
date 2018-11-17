@@ -1,5 +1,5 @@
 %
-% airs_diff_map -- annual maps to lat x lon x year table
+% airs_anmap_stat -- annual maps to lat x lon x year stats
 %
 % typical variables for LW window tests
 %   M1_tab  - nlat x nlon x ny, annual BT means

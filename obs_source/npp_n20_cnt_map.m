@@ -1,12 +1,11 @@
 %
-% cris_obs_map - equal area obs stats for CrIS NPP and J1
+% npp_n20_cnt_map - compare NPP and N20 equal area obs counts
 %
 
 addpath ../source
-addpath ../map_source
-addpath /asl/packages/ccast/motmsc/time
 addpath /asl/packages/ccast/motmsc/utils
-addpath ../map_data2
+% addpath ../obs_16day_mix_v1
+addpath ../obs_16day_cris_c4
 
 nLat = 24;  dLon = 4;
 
@@ -16,10 +15,10 @@ M2 = []; W2= []; N2 = [];
 
 % loop on 16-day sets
 year = 2018;
-% for i = [5:7 10:11]
-  for i = 10
-  c1 = load(sprintf('NPP_902y%ds%0.2d.mat', year, i));
-  c2 = load(sprintf('N20_902y%ds%0.2d.mat', year, i));
+% for i = [5:7 10:19]
+for i = 10
+  c1 = load(sprintf('NPP_c04y%ds%0.2d.mat', year, i));
+  c2 = load(sprintf('N20_c04y%ds%0.2d.mat', year, i));
 
   lat_list1 = c1.lat_list;
   lon_list1 = c1.lon_list;

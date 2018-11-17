@@ -1,31 +1,25 @@
 
-obs_16day_source
------------------
-take a channel set, read every granule for the requested days,
-build lists of selected obs, and then equal area maps from the
-lists.  The batch scripts are set up to do multiple 16-day sets.
-Scripts airs_bt_map, cris_bt_map, airs_obs_map, cris_obs_map all
-loop on the 16-day sets and build maps, and airs_stat_map loops
-on 16-day sets and builds a summary set for further processing.
-The map_test scripts work from an earlier form of 16-day maps.
-See README there for more info.
+map_source
+----------
+recent tests
+
+obs_source
+-----------
+an "obs list" is a subset of AIRS or CrIS obs, typically a
+latitude weighted subset of all obs for 16-days, for a small
+subset of channels.  See obs_source/README for more info.
 
 obs_quint_source
-----------------
-take parameters such as frequency, cross track index, and Tb sample
-spans, read every granule for the requested days, and build lists of
-selected obs.  Obs saved include Tb, lat, lon, time, solar zenith,
-and satellite zenith.  Scripts are in obs_quint_source and data in
-obs_quint_data.
+-----------------
+earlier versions of obs list functions that work with quintiles
+(73-day sets).  See obs_quint_src/README for more info.
 
-  airs_obs_list  - build list of selected AIRS obs
-  cris_obs_list  - build list of selected CrIS obs
-  cris_obs_batch - batch wrapper for cris_obs_list
-  airs_obs_batch - batch wrapper for airs_obs_list
-  plot_obs_*     - assorted plot and test scripts
-  uw_qc_*        - QC with UW omplex residual test
-
-  obs_quint_data  - obs list data, mostly as quintiles
+recent data
+-----------
+obs_16day_airs_c* - 16-day AIRS rad obs lists and map stats
+obs_16day_mix_v1 - 16-day AIRS & CrIS obs from LW window span
+map_16day_mix_v1 - 16-day AIRS & CrIS maps from LW window span 
+obs_quint_mix_v1 - quint AIRS & CrIS obs, LW & SW window span
 
 tbin tests
 -----------

@@ -1,0 +1,17 @@
+
+eary versions of the obs list functions intended to work with
+quintiles (73-day sets).  scripts take parameters such as window
+frequency span, BT sample range, and cross track index, read every
+granule for the requested days, and build lists of selected obs.
+obs saved include Tb, lat, lon, time, solar zenith, and satellite
+zenith.
+
+  airs_obs_list  - build list of selected AIRS obs
+  cris_obs_list  - build list of selected CrIS obs
+  cris_obs_batch - batch wrapper for cris_obs_list
+  airs_obs_batch - batch wrapper for airs_obs_list
+  plot_obs_*     - assorted plot and test scripts
+  uw_qc_*        - QC with UW omplex residual test
+
+the old data directory obs_quint_data was moved to obs_quint_mix_v1
+

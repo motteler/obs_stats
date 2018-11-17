@@ -1,14 +1,10 @@
 %
-% airs_stats - equal area BT mean and std for CrIS NPP and J1
-%
-% note that asc is night, and ~asc is day
+% airs_n20_bt_map - compare AIRS and N20 equal area BT maps
 %
 
 addpath ../source
-addpath ../map_source
-addpath /asl/packages/ccast/motmsc/time
 addpath /asl/packages/ccast/motmsc/utils
-addpath ../map_data2
+addpath ../obs_16day_mix_v1
 
 nLat = 24;  dLon = 4;
 

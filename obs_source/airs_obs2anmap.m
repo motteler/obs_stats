@@ -1,13 +1,11 @@
 %
-% airs_stat_map - take 16-day obs-lists to equal area mean and std
+% airs_obs2anmap - take AIRS 16-day obs lists to annual maps
 % 
 
 addpath ../source
-addpath ../map_source
 addpath /asl/packages/ccast/source
-addpath /asl/packages/ccast/motmsc/time
 addpath /asl/packages/ccast/motmsc/utils
-addpath ../airs_rad16
+addpath ../obs_16day_airs_c2
 
 nLat = 24;  dLon = 4;
 

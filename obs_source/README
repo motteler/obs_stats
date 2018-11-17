@@ -4,26 +4,26 @@ latitude weighted subset of all obs for 16-days, for a small
 subset of channels.
 
   airs_obs_list - AIRS obs list from channel list
-  cris_obs_list - CrIS obs list from window span
+  cris_obs_list - CrIS obs list from channel list
 
   airs_obs_batch - batch wrapper for airs_obs_list
-  npp_obs_batch - batch wrapper for cris_obs_list
-  n20_obs_batch - batch wrapper for cris_obs_list
+  npp_obs_batch  - batch wrapper for cris_obs_list
+  n20_obs_batch  - batch wrapper for cris_obs_list
 
-Scripts airs_bt_map, cris_bt_map, airs_obs_map, cris_obs_map k
-loop on the 16-day sets and build maps, and airs_stat_map loops
-on 16-day sets and builds a summary set for further processing.
+  airs_obs2anmap  - AIRS 16-day obs lists to annual maps
+  airs_anmap_stat - annual maps to lat x lon x year stats
 
-The old "map_data" directory was created by early map tabulation
-version of these functions.  Scripts in obs_source/map_test read
-this data.  The old data directories have been renamed
+  airs_n20_bt_map  - compare AIRS and N20 equal area BT maps
+  airs_n20_cnt_map - compare AIRS and NPP equal area obs counts
+  npp_n20_bt_map   - compare NPP and N20 equal area BT maps
+  npp_n20_cnt_map  - compare NPP and N20 equal area obs counts
 
+Some older data directories were renamed:
   map_data -> map_16day_mix_v1
   map_data2 -> obs_16day_mix_v1
   airs_rad16 -> obs_16day_airs_c1, obs_16day_airs_c2
 
-the functions in map_test read the older map tabulations
-
+The older functions in map_test refer to "map_data"
   map_test1 - combine equal area Tb maps, do AIRS and CrIS diff
   map_test2 - combine equal area Tb maps, do CrIS annual diffs
   map_test3 - combine equal area Tb maps, double difference

@@ -1,10 +1,10 @@
 %
-% airs_list2map - take 16-day obs lists to equal area maps
+% airs_obs2map2 - take AIRS 16-day obs lists to 16-day maps
 % 
 
 addpath ../source
-addpath ../obs_source
 addpath /asl/packages/ccast/source
+addpath ../obs_16day_airs_c3
 
 nLat = 24;  dLon = 4;
 dlist = [];
@@ -45,7 +45,7 @@ for year = 2018
 %   profile report
 
     % tabulate map data
-    ytot = cat(4, ytot, gtot);
+    ytot = cat(3, ytot, gtot);
     yavg = cat(4, yavg, gavg);
     yvar = cat(4, yvar, gvar);
     sind = [sind, i];
