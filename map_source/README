@@ -1,0 +1,17 @@
+
+airs_obs2map  - AIRS 16-day obs lists to 16-day maps
+airs_map_stat - 16-day maps to lat x lon x time stats
+
+merge_var  - combine mean and variance from two sets
+merge_tree - combine mean and variance from a list
+
+airs_weight_fnx - quick look at AIRS weighting functions
+
+airs_sdr2map  - equal area map directly from AIRS data
+ 
+mean_test1  - compare SP and DP matlab mean with SP rec_var
+mean_test2  - compare DP radiance and BT means as BT
+mean_test3  - simple demo of radiance vs BT means
+tree_test1  - test indexing for merge_tree
+merge_test? - tests for merge_var
+

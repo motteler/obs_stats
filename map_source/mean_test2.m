@@ -1,5 +1,6 @@
-
-% basic comparison of rad and BT means
+%
+% compare DP radiance and BT means as BT
+%
 
 addpath /asl/packages/ccast/source
 
@@ -8,7 +9,7 @@ addpath /asl/packages/ccast/source
 
 rad_list = double(rad_list);
 rad_mean = rad2bt(vlist, mean(rad_list, 2));  % rad mean to BT
-bt_mean = mean(rad2bt(vlist, rad_list), 2);  % rad to BT, BT mean
+bt_mean = mean(rad2bt(vlist, rad_list), 2);   % rad to BT, BT mean
 format bank
 real([vlist, rad_mean, bt_mean, rad_mean - bt_mean])
 format short
