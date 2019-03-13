@@ -22,7 +22,7 @@
 function cris_obs_list(year, dlist, ofile, opt1)
 
 % default params 
-cdir = '/asl/data/cris/ccast/sdr60_npp_HR';   % path to CrIS data
+cdir = '/asl/cris/ccast/sdr60_npp_HR';   % path to CrIS data
 iFOR =  1 : 30;       % full scans
 iFOV =  1 : 9;        % all FOVs
 v1 = 899; v2 = 904;   % Tb window frequency span

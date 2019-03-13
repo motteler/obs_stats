@@ -13,15 +13,15 @@ M1 = []; W1= []; N1 = [];
 M2 = []; W2= []; N2 = [];
 
 iFOV = 5;
-ichan = 1;
+ichan = 4;
   slist = 15;               % most complete set
 % slist = [6 10 12 14 15];  % relatively complete sets
 year = 2018;
 
 % loop on 16-day sets
 for i = slist
-  c1 = load(sprintf('NPP_c04y%ds%0.2d.mat', year, i));
-  c2 = load(sprintf('N20_c04y%ds%0.2d.mat', year, i));
+  c1 = load(sprintf('NPP_c05y%ds%0.2d.mat', year, i));
+  c2 = load(sprintf('N20_c05y%ds%0.2d.mat', year, i));
 
   % FOV subsetting
   ix1 = c1.fov_list == iFOV;

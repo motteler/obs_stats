@@ -10,7 +10,7 @@ nLat = 24;  dLon = 4;
 dlist = [];
 
 % loop on years
-% for year = 2003 : 2017
+% for year = 2002 : 2018
 for year = 2018
 
   % annual tabulation
@@ -35,13 +35,13 @@ for year = 2018
       continue
     end
 
-    % convert rad to BT
-    bt_list = real(rad2bt(c1.vlist, c1.rad_list));
+%   % convert rad to BT
+%   bt_list = real(rad2bt(c1.vlist, c1.rad_list));
 
 %   profile clear
 %   profile on
     [latB, lonB, gtot, gavg, gvar] = ...
-       equal_area_bins(nLat, dLon, c1.lat_list, c1.lon_list, bt_list);
+       equal_area_bins(nLat, dLon, c1.lat_list, c1.lon_list, c1.rad_list);
 %   profile report
 
     % tabulate map data
@@ -57,7 +57,7 @@ for year = 2018
   ixt = c1.ixt;
   adir = c1.adir;
   vlist = c1.vlist;
-  mfile = sprintf('airs_c03_%d_tab.mat', year);
+  mfile = sprintf('airsX_c03_%d_tab.mat', year);
   fprintf(1, 'saving %s\n', mfile);
   save(mfile, 'ytot', 'yavg', 'yvar', 'sind', 'latB', 'lonB', ...
               'nLat', 'dLon', 'year', 'vlist', 'ixt', 'adir');

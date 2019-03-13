@@ -6,10 +6,10 @@
 nchan = 7; 
 nlat = 48; 
 nlon = 90; 
-k1 = 20;
-k2 = 30;
-x1 = randn([nchan,nlat,nlon,k1]);
-x2 = randn([nchan,nlat,nlon,k2]);
+k1 = 100;
+k2 = 500;
+x1 = randn([nchan,nlat,nlon,k1]) * 20 + 200;
+x2 = randn([nchan,nlat,nlon,k2]) * 20 + 200;
 x3 = cat(4,x1,x2);
 n1 = ones(nchan,nlat,nlon) * k1;
 n2 = ones(nchan,nlat,nlon) * k2;

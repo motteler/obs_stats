@@ -3,10 +3,10 @@
 %
 
 % define two sets
-n1 = 1e5; 
-n2 = 2e5;
-x1 = randn(n1, 1);
-x2 = randn(n2, 1);
+n1 = 1e9; 
+n2 = 2e9;
+x1 = randn(n1, 1) * 20 + 200;
+x2 = randn(n2, 1) * 20 + 200;
 
 % take the means
 u1 = mean(x1);

@@ -1,5 +1,5 @@
 %
-% airs_map_stat -- 16-day maps to lat x lon x time stats
+% airs_trends -- 16-day maps to lat x lon x time trends
 %
 % AIRS "c3" channel set
 %   1   699.380    250 mb peak
@@ -123,6 +123,7 @@ for i = nsp1+1 : nset-nsp1;   % center of moving window
 %                         utab(:,:,:,i-nsp1:i+nsp1), ...
 %                         vtab(:,:,:,i-nsp1:i+nsp1));
 % rms(u1(:) - uX(:)) / rms(uX(:))
+% rms(v1(:) - vX(:)) / rms(vX(:))
 end
 
 % moving average set 2
@@ -148,7 +149,8 @@ for i = nsp2+1 : nset-nsp2;   % center of moving window
   dnum2(i-nsp2) = dnum(i);
 end
 
-% datetime axes for moving average dates
+% datetime axes for plots 
+dax = datetime(dnum, 'ConvertFrom', 'datenum');
 dax1 = datetime(dnum1, 'ConvertFrom', 'datenum');
 dax2 = datetime(dnum2, 'ConvertFrom', 'datenum');
 
@@ -156,7 +158,8 @@ dax2 = datetime(dnum2, 'ConvertFrom', 'datenum');
 % mean and variance over latitude bands
 %---------------------------------------
 % specify N and S boundaries
-  LBN = 50; LBS = 20;
+  LBN = 90; LBS = -90;
+% LBN = 50; LBS = 20;
 % LBN = 90; LBS = 73;
 Lix = find(LBS <= latB & latB < LBN);
 nbin = length(Lix)*nlon;
@@ -200,17 +203,19 @@ end
 
 % sample latitude band plot
 ic = 3;  % chan index
+% uzone1 = rad2bt(vlist, uzone1);
+% uzone2 = rad2bt(vlist, uzone2);
 figure(1)
 subplot(2,1,1)
 plot(dax1, uzone1(ic,:), dax2, uzone2(ic,:), 'linewidth', 2)
-tstr = 'AIRS %d-%d deg lat band, %.2f cm-1';
+tstr = 'AIRS %d to %d deg lat band, %.2f cm-1';
 title(sprintf(tstr, LBS, LBN, vlist(ic)))
 legend('1 yr mv avg', '3 yr mv avg', 'location', 'best')
 ylabel('BT (K)')
 grid on
 subplot(2,1,2)
-plot(dax1, vzone1(ic,:), dax2, vzone2(ic,:), 'linewidth', 2)
-legend('1 yr mv var', '3 yr mv var')
+plot(dax1, sqrt(vzone1(ic,:)), dax2, sqrt(vzone2(ic,:)), 'linewidth', 2)
+legend('1 yr mv std', '3 yr mv std')
 xlabel('year')
 ylabel('BT (K)')
 grid on
@@ -218,7 +223,7 @@ grid on
 %---------------------------------
 % poly fit to moving average bins
 %---------------------------------
-ic = 7;  % chan index
+% ic = 3;  % chan index
 pd = 1;  % poly degree
 poly1 = NaN(nlat, nlon, pd+1);
 poly2 = NaN(nlat, nlon, pd+1);
@@ -252,7 +257,9 @@ for i = 1 : nlat
   end
 end
 
-% global slope map
+%------------------
+% global trend map
+%------------------
 tstr = sprintf('AIRS %.2f cm-1 15 year trend', vlist(ic));
 equal_area_map(2, latB, lonB, 365 * poly1(:,:,1), tstr);
 load llsmap5
@@ -261,13 +268,20 @@ caxis([-0.2, 0.2])
 c = colorbar;
 c.Label.String = 'degrees (K)/year';
 
-% single bin moving window and slope
-% ic = 5;   % chan index
+return
+
+%------------------
+% single bin stats
+%------------------
+% ic = 3;   % chan index
 ilat = 40;  % lat bin index
 ilon = 46;  % lon bin index
 
-yy1 = squeeze(umov1(ic, ilat, ilon, :));
-yy2 = squeeze(umov2(ic, ilat, ilon, :));
+uu1 = squeeze(umov1(ic, ilat, ilon, :));
+uu2 = squeeze(umov2(ic, ilat, ilon, :));
+
+vv1 = squeeze(vmov1(ic, ilat, ilon, :));
+vv2 = squeeze(vmov2(ic, ilat, ilon, :));
 
 zz1 = polyval(squeeze(poly1(ilat, ilon, :)), xtmp1);
 zz2 = polyval(squeeze(poly2(ilat, ilon, :)), xtmp2);
@@ -277,7 +291,7 @@ slon = (lonB(ilon) + lonB(ilon+1)) / 2;
 
 figure(3); clf
 subplot(2,1,1)
-plot(dax1, yy1, dax2, yy2, 'linewidth', 2)
+plot(dax1, uu1, dax2, uu2, 'linewidth', 2)
 tstr = 'AIRS bin (%.1f, %.1f) %.2f cm-1';
 title(sprintf(tstr, slat, slon, vlist(ic)))
 legend('1 yr mv avg', '3 yr mv avg', 'location', 'best')
@@ -290,6 +304,43 @@ xlabel('year')
 ylabel('BT (K)')
 grid on
 
+uux = squeeze(utab(ic, ilat, ilon, :));
+uu1 = squeeze(umov1(ic, ilat, ilon, :));
+
+vvx = squeeze(vtab(ic, ilat, ilon, :));
+vv1 = squeeze(vmov1(ic, ilat, ilon, :));
+
+figure(4); clf
+subplot(2,1,1)
+plot(dax, uux, dax1, uu1, 'linewidth', 2)
+tstr = 'AIRS bin (%.1f, %.1f) %.2f cm-1';
+title(sprintf(tstr, slat, slon, vlist(ic)))
+legend('16-day sets', '1 yr mv avg', 'location', 'best')
+ylabel('BT (K)')
+grid on
+subplot(2,1,2)
+plot(dax, sqrt(vvx), dax1, sqrt(vv1), 'linewidth', 2)
+legend('16-day std', '1 yr mv std', 'location', 'best')
+xlabel('year')
+ylabel('BT (K)')
+grid on
+
+return
+
+figure(4); clf
+subplot(2,1,1)
+plot(dax1, uu1, dax2, uu2, 'linewidth', 2)
+tstr = 'AIRS bin (%.1f, %.1f) %.2f cm-1';
+title(sprintf(tstr, slat, slon, vlist(ic)))
+legend('1 yr mv avg', '3 yr mv avg', 'location', 'best')
+ylabel('BT (K)')
+grid on
+subplot(2,1,2)
+plot(dax1, vv1, dax2, vv2, 'linewidth', 2)
+legend('1 yr mv var', '3 yr mv var', 'location', 'best')
+xlabel('year')
+ylabel('BT (K)')
+grid on
 
 % % plot quadratic coeff's, assumes pd = 2
 % tstr = sprintf('AIRS LW %d to %d BT "a" (ax^2+bx+c)', y1, y2);
