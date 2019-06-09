@@ -1,8 +1,11 @@
 
-An "obs list" is a subset of AIRS or CrIS obs, typically a
-latitude weighted subset of all obs for 16-days, for a small
-subset of channels.
+An "obs list" is a subset of AIRS or CrIS SDR data, typically a
+latitude weighted subset of all obs for 16-days, for a small subset
+of channels.  An "annual map" is an nchan x nlat x nlon x nset table
+of 16-day stats, usually for a full year.
 
+producing obs lists
+--------------------
   airs_obs_list - AIRS obs list from channel list
   cris_obs_list - CrIS obs list from channel list
 
@@ -10,22 +13,40 @@ subset of channels.
   npp_obs_batch  - batch wrapper for cris_obs_list
   n20_obs_batch  - batch wrapper for cris_obs_list
 
-  airs_obs2anmap  - AIRS 16-day obs lists to annual maps
-  airs_anmap_stat - annual maps to lat x lon x year stats
+obs list to annual maps
+------------------------
+  airs_obs2map_c2  - AIRS 16-day obs lists to single annual map
+  airs_obs2tab_c3  - AIRS 16-day obs lists to 4d annual map table
 
+stats from annual maps 
+-----------------------
+  airs_trends     - annual maps to lat x lon x time trends
+  airs_lat_bands  - mean and variance of latitude bands 
+  airs_tab_stats  - annual map tables to map stats
+  cris_tab_stats  - annual map tables to map stats
+
+stats from 16-day obs lists
+----------------------------
   airs_n20_bt_map  - compare AIRS and N20 equal area BT maps
   airs_n20_cnt_map - compare AIRS and NPP equal area obs counts
   npp_n20_bt_map   - compare NPP and N20 equal area BT maps
   npp_n20_cnt_map  - compare NPP and N20 equal area obs counts
+  npp_n20_fov_map  - FOV breakouts for NPP and N20 equal area maps
+  cris_obs2std     - per-channel mean and std from obs lists
 
-Some older data directories were renamed:
-  map_data -> map_16day_mix_v1
-  map_data2 -> obs_16day_mix_v1
-  airs_rad16 -> obs_16day_airs_c1, obs_16day_airs_c2
+older functions
+----------------
+  airs_weight_fnx - quick look at AIRS weighting functions
+  airs_anmap_stat - c1 annual maps to lat x lon x year stats
 
-The older functions in map_test refer to "map_data"
-  map_test1 - combine equal area Tb maps, do AIRS and CrIS diff
-  map_test2 - combine equal area Tb maps, do CrIS annual diffs
-  map_test3 - combine equal area Tb maps, double difference
-  map_test4 - combine equal area Tb maps, CrIS npp and n20 diffs
+  some older data directories were renamed:
+    map_data -> map_16day_mix_v1
+    map_data2 -> obs_16day_mix_v1
+    airs_rad16 -> obs_16day_airs_c1, obs_16day_airs_c2
+
+  the older functions in map_test refer to "map_data"
+    map_test1 - combine equal area Tb maps, do AIRS and CrIS diff
+    map_test2 - combine equal area Tb maps, do CrIS annual diffs
+    map_test3 - combine equal area Tb maps, double difference
+    map_test4 - combine equal area Tb maps, CrIS npp and n20 diffs
 

@@ -11,7 +11,7 @@ dlist = [];
 
 % loop on years
 % for year = 2003 : 2017
-for year = 2018
+for year = 2018 : 2019
 
   % annual tabulation
   ytot = [];

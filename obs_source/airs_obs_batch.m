@@ -10,10 +10,10 @@ addpath /asl/packages/ccast/motmsc/time
 
 procid = str2num(getenv('SLURM_PROCID'));
 nprocs = str2num(getenv('SLURM_NPROCS'));
-nodeid = sscanf(getenv('SLURMD_NODENAME'), 'n%d');
+nodeid = sscanf(getenv('SLURMD_NODENAME'), '%s');
 taskid = str2num(getenv('SLURM_ARRAY_TASK_ID'));
 
-fprintf(1, 'airs_obs_batch: year %d set %d node %d\n', year, taskid, nodeid);
+fprintf(1, 'airs_obs_batch: year %d set %d node %s\n', year, taskid, nodeid);
 
 if ~(1 <= taskid & taskid <= 23)
   error('set index out of range')

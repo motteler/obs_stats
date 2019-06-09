@@ -12,11 +12,12 @@ addpath /asl/packages/airs_decon/source
 more off
 
 % get parameters from slurm env
-procid = str2num(getenv('SLURM_PROCID'));
-nprocs = str2num(getenv('SLURM_NPROCS'));
-nodeid = sscanf(getenv('SLURMD_NODENAME'), 'n%d');
-taskid = str2num(getenv('SLURM_ARRAY_TASK_ID'));
-fprintf(1, 'n20_batch: year %d set %d node %d\n', year, taskid, nodeid);
+jobid = str2num(getenv('SLURM_JOB_ID'));          % job ID
+taskid = str2num(getenv('SLURM_ARRAY_TASK_ID'));  % job array task ID
+procid = str2num(getenv('SLURM_PROCID'));         % relative process ID
+ntasks = str2num(getenv('SLURM_NTASKS'));         % number of tasks
+nodeid = sscanf(getenv('SLURMD_NODENAME'), '%s'); % node name
+fprintf(1, 'n20_batch: year %d set %d node %s\n', year, taskid, nodeid);
 
 % taskid is the 16-day set number
 if ~(1 <= taskid & taskid <= 23)

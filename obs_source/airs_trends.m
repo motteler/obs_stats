@@ -1,7 +1,7 @@
 %
-% airs_trends -- 16-day maps to lat x lon x time trends
+% airs_trends -- annual maps to lat x lon x time trends
 %
-% AIRS "c3" channel set
+% AIRS c03 channel set
 %   1   699.380    250 mb peak
 %   2   746.967    CO2 proxy
 %   3   902.040    LW window
@@ -58,7 +58,7 @@ utab = []; % nchan x nlat x nlon x time bin mean
 vtab = []; % nchan x nlat x nlon x time bin variance
 
 % loop on annual tabulations
-for year = 2002 : 2018
+for year = 2002 : 2019
 
   mfile = sprintf('airs_c03_%d_tab.mat', year);
   fprintf(1, 'loading %s\n', mfile);
@@ -210,12 +210,12 @@ subplot(2,1,1)
 plot(dax1, uzone1(ic,:), dax2, uzone2(ic,:), 'linewidth', 2)
 tstr = 'AIRS %d to %d deg lat band, %.2f cm-1';
 title(sprintf(tstr, LBS, LBN, vlist(ic)))
-legend('1 yr mv avg', '3 yr mv avg', 'location', 'best')
+legend('1 yr mv avg', '3 yr mv avg', 'location', 'southeast')
 ylabel('BT (K)')
 grid on
 subplot(2,1,2)
 plot(dax1, sqrt(vzone1(ic,:)), dax2, sqrt(vzone2(ic,:)), 'linewidth', 2)
-legend('1 yr mv std', '3 yr mv std')
+legend('1 yr mv std', '3 yr mv std', 'location', 'southeast')
 xlabel('year')
 ylabel('BT (K)')
 grid on
@@ -260,7 +260,7 @@ end
 %------------------
 % global trend map
 %------------------
-tstr = sprintf('AIRS %.2f cm-1 15 year trend', vlist(ic));
+tstr = sprintf('AIRS %.2f cm-1 16 year trend', vlist(ic));
 equal_area_map(2, latB, lonB, 365 * poly1(:,:,1), tstr);
 load llsmap5
 colormap(llsmap5)

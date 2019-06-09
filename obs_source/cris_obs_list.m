@@ -8,8 +8,27 @@
 % INPUTS
 %   year   - year, as an integer
 %   dlist  - list of days-of-the-year
-%   ofile  - save file for obs lists
+%   ofile  - output file for obs lists
+%   opt1   - see options in code, below
 %
+% OUTPUT file ofile, with variables
+%   rad_list  - nchan x nobs radiance
+%   rin_list  - nobs integrated radiance
+%   lat_list  - nobs latitude
+%   lon_list  - nobs longitude
+%   tai_list  - nobs obs time, TAI
+%   zen_list  - nobs satellite zenith
+%   sol_list  - nobs solar zenith
+%   asc_list  - nobs NOAA asc/desc flag 
+%   fov_list  - nobs obs FOV
+%   for_list  - nobs obs FOR
+%   iFOV   - selected FOVs 
+%   iFOR   - selected FORs
+%   vlist  - selected frequencies
+%   hapod  - 0 for no apod, 1 for Hamming
+%   year   - integer year for this file
+%   dlist  - list of days-of-the-year
+% 
 % DISCUSSION
 %   uses channel list rather than window span
 %
@@ -50,6 +69,7 @@ cyear = fullfile(cdir, sprintf('%d', year));
 
 % initialize obs lists
 rad_list = [];
+rin_list = [];
 lat_list = [];
 lon_list = [];
 tai_list = [];
@@ -91,6 +111,9 @@ for di = dlist
         rtmp = squeeze(d1.rSW(:,iFOV,iFOR,:));
         vlist = d1.vSW(ixv);
       end
+
+    % radiance integral over the selected band
+    rin = squeeze(mean(rtmp));
 
     % option for hamming apodization
     if hapod
@@ -137,6 +160,7 @@ for di = dlist
 
     % valid radiance subset
     rad = rad(:,iOK);
+    rin = rin(iOK);
 
     % valid geo subset
     lat = lat(iOK);
@@ -153,6 +177,7 @@ for di = dlist
          -180 <= lon & lon <= 180 & ...
          ~isnan(asc);
     rad = rad(:,gOK);
+    rin = rin(gOK);
     lat = lat(gOK);
     lon = lon(gOK);
     tai = tai(gOK);
@@ -167,6 +192,7 @@ for di = dlist
     [m,n] = size(lat_rad);
     jx = rand(m, n) < abs(cos(lat_rad));
     rad = rad(:,jx);
+    rin = rin(jx);
     lat = lat(jx);
     lon = lon(jx);
     tai = tai(jx);
@@ -176,8 +202,9 @@ for di = dlist
     fov = fov(jx);
     fxx = fxx(jx);
 
-   % add obs to lists
+    % add obs to lists
     rad_list = [rad_list, rad];
+    rin_list = [rin_list; rin];
     lat_list = [lat_list; lat];
     lon_list = [lon_list; lon];
     tai_list = [tai_list; tai];
@@ -192,7 +219,7 @@ for di = dlist
 end % loop on days
 
 % save the obs list
-save(ofile, 'year', 'dlist', 'cdir', 'iFOV', 'iFOR', 'vlist', ...
-            'hapod', 'rad_list', 'lat_list', 'lon_list', 'tai_list', ...
+save(ofile, 'year', 'dlist', 'cdir', 'iFOV', 'iFOR', 'vlist', 'hapod', ...
+            'rin_list', 'rad_list', 'lat_list', 'lon_list', 'tai_list', ...
             'zen_list', 'sol_list', 'asc_list', 'fov_list', 'for_list');
 

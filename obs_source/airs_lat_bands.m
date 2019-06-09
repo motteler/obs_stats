@@ -1,5 +1,5 @@
 %
-% airs_chan_map -- 16-day maps to lat x lon x time channel maps
+% airs_trends -- mean and variance of latitude bands
 %
 % AIRS "c3" channel set
 %   1   699.380    250 mb peak
@@ -10,16 +10,11 @@
 %   6  2384.252    250 mb peak
 %   7  2500.601    SW window
 %
-% map table
+% basic map table
 %   dnum - time index as datenums
 %   ntab - nlat x nlon x nset
 %   utab - nchan x nlat x nlon x nset
 %   vtab - nchan x nlat x nlon x nset
-%
-% summary maps
-%   nmap - nchan x nlat x nlon
-%   umap - nchan x nlat x nlon
-%   vmap - nchan x nlat x nlon
 %
 % misc support variables
 %   nchan - number of tabulated channels
@@ -29,6 +24,12 @@
 %   latB  - nlat+1 vector, latitude bin boundaries
 %   lonB  - nlon+1 vector, longitude bin boundaries
 %   nset  - total number of 16-day sets
+%
+% saved values
+%   dax   - nset time index as datetime
+%   nband - nchan x nlat x nset obs counts
+%   uband - nchan x nlat x nset band means
+%   vband - nchan x nlat x nset band variance
 %
 
 addpath ../source
@@ -43,10 +44,9 @@ utab = []; % nchan x nlat x nlon x time bin mean
 vtab = []; % nchan x nlat x nlon x time bin variance
 
 % loop on annual tabulations
-for year = 2002 : 2018
+for year = 2002 : 2019
 
   mfile = sprintf('airs_c03_%d_tab.mat', year);
-% mfile = sprintf('airsX_c03_%d_tab.mat', year);
   fprintf(1, 'loading %s\n', mfile);
   if exist(mfile) == 2
     c1 = load(mfile);
@@ -73,44 +73,50 @@ end
 [nchan, nlat, nlon, nset] = size(utab);
 
 % add 1's row to ntab to match utab and vtab
-ntmp = ones(nchan, 1) * ntab(:)';
-ntmp = reshape(ntmp, nchan, nlat, nlon, nset);
+ntab = ones(nchan, 1) * ntab(:)';
+ntab = reshape(ntab, nchan, nlat, nlon, nset);
 
+% vlist and bin boundaries from annual tab
+vlist = c1.vlist;
 latB = c1.latB;
 lonB = c1.lonB;
-vlist = c1.vlist;
 
-%----------------------
-% summary mean and std
-%----------------------
+% datetime values for dnum 16-day set times
+dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
-[nmap, umap, vmap] = merge_tree(ntmp, utab, vtab);
+%---------------------------------------
+% mean and variance over latitude bands
+%---------------------------------------
 
-% umap = rad2bt(vlist, umap);
-% vmap = rad2bt(vlist, vmap);
+nband = zeros(nchan, nlat, nset);
+uband = zeros(nchan, nlat, nset);
+vband = zeros(nchan, nlat, nset);
 
-ic = 3;
+% loop on latitude bands
+for j = 1 : nlat
 
-utmp = squeeze(umap(ic,:,:));
-tstr = sprintf('AIRS %.2f cm-1 15 year mean', vlist(ic));
-equal_area_map(1, latB, lonB, utmp, tstr);
-c = colorbar; c.Label.String = 'degrees (K)';
+  % nchan x nlon x nset temp vars
+  ntmp = squeeze(ntab(:,j,:,:));
+  utmp = squeeze(utab(:,j,:,:));
+  vtmp = squeeze(vtab(:,j,:,:));
 
-vtmp = squeeze(vmap(ic,:,:));
-tstr = sprintf('AIRS %.2f cm-1 15 year std', vlist(ic));
-equal_area_map(2, latB, lonB, sqrt(vtmp), tstr);
-c = colorbar; c.Label.String = 'degrees (K)';
+  % take mean and variance over the nlon dimension
+  for i = 1 : nset
+    [nband(:,j,i), uband(:,j,i), vband(:,j,i)] = ...
+       merge_tree(ntmp(:,:,i), utmp(:,:,i), vtmp(:,:,i));
+  end
+end
 
-d1 = load('radmean');
+% save selected values
+save airs_lat_band_means ...
+  dnum dax vlist nlat nlon latB nband uband vband
 
-du = squeeze(d1.umap(ic,:,:)) - squeeze(umap(ic,:,:));
-tstr = sprintf('AIRS %.2f cm-1 rad mean minus bt mean', vlist(ic));
-equal_area_map(3, latB, lonB, du, tstr);
-c = colorbar; c.Label.String = 'degrees (K)';
-
-% load llsmap5
-% colormap(llsmap5)
-% caxis([-0.2, 0.2])
-% c = colorbar;
-% c.Label.String = 'degrees (K)/year';
+% sanity check plot
+y1 = squeeze(uband(3, 6, :));
+y2 = squeeze(uband(3, 42, :));
+plot(dax, y1, dax, y2)
+legend('band 1', 'band 2')
+xlabel('year')
+ylabel('BT (K)')
+grid on
 
