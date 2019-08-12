@@ -48,6 +48,7 @@
 
 addpath ../source
 addpath /asl/packages/ccast/source
+addpath ../map_16day_airs_c3
 
 %-------------------------------------------
 % combine annual tabulations of 16-day maps

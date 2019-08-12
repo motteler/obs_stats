@@ -1,12 +1,13 @@
 %
-% plot_obsbin - cris minus airs equal area obs
+% obs_map_diff -- CrIS minus AIRS equal area obs diffs
 %
 
 d1 = load('airs_obs_d1s2w1');
 d2 = load('cris_obs_d1s2w1');
 
 % nLat = 20;  dLon = 6;
-  nLat = 24;  dLon = 4;
+% nLat = 24;  dLon = 4;
+  nLat = 30;  dLon = 4;
 [latB1, lonB1, gtot1] = equal_area_bins(nLat, dLon, d1.slat, d1.slon);
 [latB2, lonB2, gtot2] = equal_area_bins(nLat, dLon, d2.slat, d2.slon);
 

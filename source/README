@@ -1,0 +1,39 @@
+
+current
+--------
+
+equal_area_bins -- takes a list of lat, lon, and obs and returns
+  count, mean, and variance for each bin in an equal area grid.
+  Bins are determined by dividing equal area latitude bands with
+  equally spaced longitude arcs.  This gives trapezoids and pie-
+  shaped wedges at the poles.
+
+equal_area_var -- takes a list of lat, lon, and obs values and
+  updates incremental mean and variance for each bin in an equal 
+  area grid.
+
+equal_area_spherical_bands -- partitions the globe into equal area
+  latitude bands
+
+equal_area_map  -- plots a global map from equal area bins
+
+merge_tree  -- combine mean and variance from a list
+merge_var   -- combine mean and variance from two sets
+
+test & misc
+------------
+
+fixmyQC     -- demo of the ccast L1b_stat flags
+L1b_fields  -- list all fields in an AIRS L1b file
+L1c_fields  -- list all fields in an AIRS L1c file
+equal_area_test -- compare equal area binning functions
+
+mean_test1  -- compare large SP and DP matlab means with SP rec_var
+mean_test2  -- compare DP radiance and BT means as BT
+mean_test3  -- simple demo of radiance vs BT means
+mean_test4  -- another comparison of radiance and temperature means
+merge_test1 -- test merge_var
+merge_test2 -- test merge_var
+tree_test1  -- hierarchical merge test
+
+

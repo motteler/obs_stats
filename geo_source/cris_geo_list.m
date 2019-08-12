@@ -1,21 +1,20 @@
 %
-% cris_geo_list -- geo list and bins for CrIS obs
+% cris_geo_list -- CrIS geo obs list
 %
 
+addpath ../source
 addpath /asl/packages/ccast/motmsc/time
 
-% allgeo year prefix
-ghome = '/asl/data/cris/ccast/daily';
-
-% specify year
-year = 2016;
-ystr = sprintf('%d', year);
+% year and path to data
+  cyear = '/asl/cris/ccast/sdr45_npp_HR/2016';
+% cyear = '/asl/cris/ccast/sdr45_npp_HR/2018';
 
 % days of the year
   dlist = 111 : 126;  % d1, 2016 16 day all good
 % dlist = 118 : 133;  % d2, 2016 16 day all good
 % dlist = 101 : 116;  % d3, 2016 CrIS-only good span 1
 % dlist = 117 : 132;  % d4, 2016 CrIS-only good span 2
+% dlist = 244;        % Chris H. 2018 sample test
 
 % CrIS scan spec
 % iFOR = 15 : 16;       % s1, near nadir
@@ -35,7 +34,7 @@ nFOV = length(iFOV);
   w = 1.0;
 % w = 1.1;
 
-% all obs in one pot
+% tabulated values
 lat = [];
 lon = [];
 zen = [];
@@ -43,33 +42,43 @@ sol = [];
 tai = [];
 asc = logical([]);
 
-% loop on days
-for doy = dlist
-  tmp = datestr(datenum(year,1,1) + doy - 1, 30);
-  geofile = fullfile(ghome, ystr, ['allgeo', tmp(1:8), '.mat']);
-  d1 = load(geofile);
-  tlat = d1.allgeo.Latitude(iFOV, iFOR, :);
-  tlon = d1.allgeo.Longitude(iFOV, iFOR, :);
-  tzen = d1.allgeo.SatelliteZenithAngle(:, iFOR, :);
-  tsol = d1.allgeo.SolarZenithAngle(:, iFOR, :);
-  ttai = iet2tai(d1.allgeo.FORTime(iFOR, :));
-  tasc = d1.allgeo.Asc_Desc_Flag;
+% loop on days of the year
+for di = dlist
 
-  tlat = tlat(:);
-  tlon = tlon(:);
-  tzen = tzen(:);
-  tsol = tsol(:);
-  ttai = ones(nFOV,1) * ttai(:)';
-  ttai = ttai(:);
-  tasc = ones(nFOV*nFOR,1) * tasc(:)';
-  tasc = tasc(:) == 1;
+  % loop on CrIS granules
+  doy = sprintf('%03d', di);
+  flist = dir(fullfile(cyear, doy, 'CrIS_SDR*.mat'));
 
-  lat = [lat; tlat];
-  lon = [lon; tlon];
-  zen = [zen; tzen];
-  sol = [sol; tsol];
-  tai = [tai; ttai];
-  asc = [asc; tasc];
+  for fi = 1 : length(flist);
+
+    cfile = fullfile(cyear, doy, flist(fi).name);
+    d1 = load(cfile, 'geo');
+    tlat = d1.geo.Latitude(iFOV, iFOR, :);
+    tlon = d1.geo.Longitude(iFOV, iFOR, :);
+    tzen = d1.geo.SatelliteZenithAngle(:, iFOR, :);
+    tsol = d1.geo.SolarZenithAngle(:, iFOR, :);
+    ttai = iet2tai(d1.geo.FORTime(iFOR, :));
+    tasc = d1.geo.Asc_Desc_Flag;
+
+    tlat = tlat(:);
+    tlon = tlon(:);
+    tzen = tzen(:);
+    tsol = tsol(:);
+    ttai = ones(nFOV,1) * ttai(:)';
+    ttai = ttai(:);
+    tasc = ones(nFOV*nFOR,1) * tasc(:)';
+    tasc = tasc(:) == 1;
+
+    lat = [lat; tlat];
+    lon = [lon; tlon];
+    zen = [zen; tzen];
+    sol = [sol; tsol];
+    tai = [tai; ttai];
+    asc = [asc; tasc];
+
+    if mod(fi, 10) == 0, fprintf(1, '.'), end
+  end
+  fprintf(1, '\n')
 end
 
 % get good obs subset
@@ -103,143 +112,6 @@ fprintf(1, '%d obs after subset\n', nsub)
 % slon = slon(~sasc);
 % stai = stai(~sasc);
 
-save cris_geo_xxxx year dlist iFOR iFOV nobs nsub slat slon stai szen ssol
+save cris_geo_xxxx ...
+  cyear dlist iFOR iFOV w nobs nsub slat slon stai szen ssol
 
-return
-
-%---------------------------
-% plot equal area grid bins
-%---------------------------
-
-nLat = 24;  dLon = 4;
-[latB, lonB, gtot] = equal_area_bins(nLat, dLon, slat, slon);
-
-gmean = mean(gtot(:));
-grel = (gtot - gmean) / gmean;
-
-tstr = 'CrIS equal area (count - mean) / mean';
-equal_area_map(1, latB, lonB, grel, tstr);
-
-%-------------------------
-% plot raw latitude bins
-%-------------------------
-% number of latitude bands is 2 x N
-% N1 = 40; N2 = 80; N3 = 120; N4 = 160;
-  N1 = 10; N2 = 20; N3 = 30; N4 = 40;
-vb1 = equal_area_spherical_bands(N1);
-vb2 = equal_area_spherical_bands(N2);
-vb3 = equal_area_spherical_bands(N3);
-vb4 = equal_area_spherical_bands(N4);
-
-figure(2); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(4,1,1)
-histogram(lat, vb1)
-title(sprintf('CrIS obs by latitude band, N = %d', N1))
-ylabel('obs count')
-grid on
-
-subplot(4,1,2)
-histogram(lat, vb2)
-title(sprintf('CrIS obs by latitude band, N = %d', N2))
-ylabel('obs count')
-grid on
-
-subplot(4,1,3)
-histogram(lat, vb3)
-title(sprintf('CrIS obs by latitude band, N = %d', N3))
-ylabel('obs count')
-grid on
-
-subplot(4,1,4)
-histogram(lat, vb4)
-title(sprintf('CrIS obs by latitude band, N = %d', N4))
-xlabel('latitude')
-ylabel('obs count')
-grid on
-
-%---------------------------
-% plot subset latitude bins
-%---------------------------
-figure(3); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(4,1,1)
-histogram(slat, vb1)
-title(sprintf('cos(lat) subset by latitude band, N = %d', N1))
-ylabel('obs count')
-grid on
-
-subplot(4,1,2)
-histogram(slat, vb2)
-title(sprintf('cos(lat) subset by latitude band, N = %d', N2))
-ylabel('obs count')
-grid on
-
-subplot(4,1,3)
-histogram(slat, vb3)
-title(sprintf('cos(lat) subset by latitude band, N = %d', N3))
-ylabel('obs count')
-grid on
-
-subplot(4,1,4)
-histogram(slat, vb4)
-title(sprintf('cos(lat) subset by latitude band, N = %d', N4))
-xlabel('latitude')
-ylabel('obs count')
-grid on
-
-return
-
-%--------------------------
-% plot raw longitude bins
-%--------------------------
-Lb5  = -180 :  5 : 180;
-Lb10 = -180 : 10 : 180;
-Lb20 = -180 : 20 : 180;
-
-figure(4); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(3,1,1)
-histogram(lon, Lb5)
-title('CrIS raw obs by 5 degree longitude band')
-ylabel('obs count')
-grid on
-
-subplot(3,1,2)
-histogram(lon, Lb10)
-title('CrIS raw obs by 10 degree longitude band')
-ylabel('obs count')
-grid on
-
-subplot(3,1,3)
-histogram(lon, Lb20)
-title('CrIS raw obs by 20 degree longitude band')
-ylabel('obs count')
-grid on
-
-%----------------------------
-% plot subset longitude bins
-%-----------------------------
-Lb5  = -180 :  5 : 180;
-Lb10 = -180 : 10 : 180;
-Lb20 = -180 : 20 : 180;
-
-figure(5); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(3,1,1)
-histogram(slon, Lb5)
-title('CrIS cos(lat) subset by 5 degree lon band')
-ylabel('obs count')
-grid on
-
-subplot(3,1,2)
-histogram(slon, Lb10)
-title('CrIS cos(lat) subset by 10 degree lon band')
-ylabel('obs count')
-grid on
-
-subplot(3,1,3)
-histogram(slon, Lb20)
-title('CrIS cos(lat) subset by 20 degree lon band')
-ylabel('obs count')
-grid on

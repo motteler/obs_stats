@@ -1,22 +1,26 @@
 
-The AIRS and CrIS geo list functions tabulate lat, lon, time, and
-sometimes zenith angles for all obs over a set of days and selected
-scan pattern.  They take a latitude weighted subset and plot stats
-both as histograms and as area weighted maps.  airs_geo_list reads
-the lat and lon fields from the airs granules, while cris_geo_list
-reads the ccast allgeo files
+AIRS and CrIS geo obs list scripts and functions.  These read AIRS
+or CrIS SDR files and tabulate lat, lon, time, and zenith angles for
+all obs over a set of days and a selected scan pattern, and do stats
+on the resulting obs lists.
 
-  airs_geo_list - geo list and bins for AIRS obs
-  cris_geo_list - geo list and bins for CrIS obs
+  airs_geo_list - build an AIRS geo obs list
+  cris_geo_list - build a CrIS geo obs list
 
-  plot_geobin  - equal area obs counts and diffs
+  airs_geo_stats  - basic stats from an AIRS obs list
+  cris_geo_stats  - basic stats from an CrIS obs list
+
+  obs_map_diff - CrIS minus AIRS equal area obs diffs
+
+  zen_angle   - plot AIRS and CrIS secant by scan angle
+  plot_subpt  - AIRS and CrIS 16 day track map
+
+older scripts
+
   plot_timebin - equal area time means and diffs
   plot_zenbin  - equal area secant means and diffs
   plot_lonbin  - equal area longitude means and difs
   ddiff_geo    - obs count double difference
   ddiff_time   - time double difference
   extend_time  - compare 16 and 32 day sequences
-
-  zen_angle   - plot AIRS and CrIS secant by scan angle
-  plot_subpt  - AIRS and CrIS 16 day track map
 

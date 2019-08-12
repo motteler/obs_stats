@@ -12,7 +12,7 @@
 #SBATCH --mem-per-cpu=16000
 #SBATCH --oversubscribe
 # #SBATCH --array=1-23%4
-#SBATCH --array=1-4
+#SBATCH --array=3-10%4
 
 # new bad node list
 # #SBATCH --exclude=n11,n71
