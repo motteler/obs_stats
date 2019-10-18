@@ -8,7 +8,7 @@ on the resulting obs lists.
   cris_geo_list - build a CrIS geo obs list
 
   airs_geo_stats  - basic stats from an AIRS obs list
-  cris_geo_stats  - basic stats from an CrIS obs list
+  cris_geo_stats  - basic stats from a CrIS obs list
 
   obs_map_diff - CrIS minus AIRS equal area obs diffs
 

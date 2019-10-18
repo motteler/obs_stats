@@ -41,7 +41,6 @@ ayear = fullfile(adir, sprintf('%d', year));
 % get L1c channel indices
 afrq = load('freq2645.txt');
 ixv = interp1(afrq, 1:2645, vlist, 'nearest');
-nchan = numel(ixv);
 vlist = afrq(ixv);
 
 % initialize obs lists
@@ -51,6 +50,7 @@ lon_list = [];
 tai_list = [];
 zen_list = [];
 sol_list = [];
+asc_list = [];
 
 % loop on days of the year
 for di = dlist
@@ -69,7 +69,7 @@ for di = dlist
     try
       rad = hdfread(afile, 'radiances');
     catch
-      fprintf(1, '\nairs_rad_list: bad file %s', afile)
+      fprintf(1, '\nairs_obs_list: bad file %s', afile)
       continue
     end
     rad = rad(:, ixt, ixv);        % cross track and channel subset
@@ -81,6 +81,9 @@ for di = dlist
     tai = single(airs2tai(hdfread(afile, 'Time')));
     zen = hdfread(afile, 'satzen');
     sol = hdfread(afile, 'solzen');
+    state =  hdfread(afile, 'state');
+    atmp = hdfread(afile, 'scan_node_type');
+    atmp = atmp{1};
 
     % cross track subset and transpose
     lat = lat(:,ixt); lat = permute(lat, [2,1]);
@@ -88,14 +91,24 @@ for di = dlist
     tai = tai(:,ixt); tai = permute(tai, [2,1]);
     zen = zen(:,ixt); zen = permute(zen, [2,1]);
     sol = sol(:,ixt); sol = permute(sol, [2,1]);
+    state = state(:,ixt); state = permute(state, [2,1]);
+    state = single(state);
+
+    % slightly wonky conversion of scan_node_type
+    asc_is_A = atmp == int8('A');
+    asc_is_D = atmp == int8('D');
+    asc = single(NaN(1,90));
+    asc(asc_is_A) = 1; asc(asc_is_D) = 0;
+    asc = repmat(asc, 90, 1);
 
     % typical values
     %  lat     90x135   97200  double
     %  lon     90x135   97200  double
     %  rad  14x90x135  680400  single
  
-    % basic radiance and latitude QC
-    iOK = -90 <= lat & lat <= 90 & cAND(-1 < rad & rad < 250);
+    % QC from radiance and latitude range check, and state
+%   iOK = -90 <= lat & lat <= 90 & cAND(-1 < rad & rad < 250);
+    iOK = -90 <= lat & lat <= 90 & cAND(-1 < rad & rad < 250) & state == 0;
 
     % latitude subsample
     nxt = length(ixt);
@@ -110,6 +123,7 @@ for di = dlist
     tai = tai(jx);
     zen = zen(jx);
     sol = sol(jx);
+    asc = asc(jx);
     if isempty(lat), continue, end
 
     % typical values
@@ -124,11 +138,12 @@ for di = dlist
     tai_list = [tai_list; tai];
     zen_list = [zen_list; zen];
     sol_list = [sol_list; sol];
+    asc_list = [asc_list; asc];
 
   end % loop on granules
   fprintf(1, '\n')
 end % loop on days
 
-save(ofile, 'year', 'dlist', 'adir', 'ixt', 'ixv', 'vlist', 'nchan', ...
-     'rad_list', 'lat_list', 'lon_list', 'tai_list', 'zen_list', 'sol_list');
+save(ofile, 'year', 'dlist', 'adir', 'ixt', 'ixv', 'vlist', 'rad_list', ...
+  'lat_list', 'lon_list', 'tai_list', 'zen_list', 'sol_list', 'asc_list');
 

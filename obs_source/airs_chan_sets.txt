@@ -1,0 +1,57 @@
+
+    AIRS channel set 5
+ind   freq   L1c ind   notes
+---  ------- -------  -------
+ 1    830.47    593   longwave max water
+ 2   1227.71   1513   weak water, column water with 1231.33
+ 3   1231.33   1520   window, lowest WV absorption
+ 4   2456.48   2449   reflected solar
+ 5   2607.89   2592   water in shortwave
+ 6   2616.38   2600   reflected solar
+ 7   2653.13   2634   reflected solar
+
+v = [830.47 1227.71 1231.33 2456.48 2607.89 2616.38 2653.13];
+
+    AIRS channel set 4
+ind   freq   L1c ind   notes
+---  ------- -------  -------
+ 1   830.47    593    window, H2O cont
+ 2   843.91    627    CFC-11
+ 3   899.62    793    window, edge M-08 small a/b drift there
+ 4   921.64    856    CFC-12  (0.1K over 16 years)
+ 5   968.23    978    window, tiny CO2?
+ 6   992.45   1037    window
+ 7  1227.71   1513    weak water, get column water with 1520
+ 8  1231.33   1520    window, lowest WV absorption
+ 9   OISST sea surface temp, map tables and PDFs only
+10   CF (cloud forcing calc), map tables and PDFs only
+
+v = [830.47 843.91 899.62 921.64 968.23 992.45 1227.71 1231.33]; 
+
+    AIRS channel set 3
+ind   freq   L1c ind   notes
+---  ------- -------  -------
+ 1   699.38    195    250 mb peak
+ 2   746.97    335    CO2 proxy
+ 3   902.04    800    LW window
+ 4  1231.33   1520    MW window
+ 5  1613.86   2162    400 mb peak
+ 6  2384.25   2376    250 mb peak
+ 7  2500.60   2491    SW window
+
+v = [699.380 746.967 902.040 1231.330 1613.862 2384.252 2500.601]
+
+AIRS channel set 2
+  746.97, 902.04, 902.39 cm-1
+
+AIRS channel set 1
+  902.04, 902.39, 1231.33, 1613.86, 2499.53, 2500.60 cm-1
+
+% get L1c indices from nominal frequency
+vL1c = load('../source/freq2645.txt');
+i = interp1(vL1c, 1:length(vL1c), v, 'nearest');
+format bank
+[v',i']
+vL1c(i)
+format short
+

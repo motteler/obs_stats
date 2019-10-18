@@ -12,7 +12,8 @@ addpath /asl/packages/ccast/motmsc/time
 % days of the year
   dlist = 111 : 126;  % d1, 2016 16 day all good
 % dlist = 118 : 133;  % d2, 2016 16 day all good
-% dlist = 244;        % Chris H. 2018 sample test
+% dlist = 244;        %  1 Sep 2019 bad match day
+% dlist = 259;        % 16 Sep 2018 good match day
 
 % AIRS scan spec
 %   ixt = 43 : 48;              % s1, near nadir

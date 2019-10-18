@@ -14,7 +14,8 @@ addpath /asl/packages/ccast/motmsc/time
 % dlist = 118 : 133;  % d2, 2016 16 day all good
 % dlist = 101 : 116;  % d3, 2016 CrIS-only good span 1
 % dlist = 117 : 132;  % d4, 2016 CrIS-only good span 2
-% dlist = 244;        % Chris H. 2018 sample test
+% dlist = 244;        % t1, 1 Sep 2018 bad match day
+% dlist = 259;        % t2, 16 Sep 2018 good match day
 
 % CrIS scan spec
 % iFOR = 15 : 16;       % s1, near nadir

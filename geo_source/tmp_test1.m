@@ -1,9 +1,12 @@
 %
-% quick look at 1 Sep 2018
+% quick look at 1 Sep 2018 and 16 Sep 2018
 %
 
-d1 = load('airs_geo_t1s1');
-d2 = load('cris_geo_t1s1');
+  d1 = load('airs_geo_t1s1');  % 1 Sep 2018
+  d2 = load('cris_geo_t1s1');
+
+% d1 = load('airs_geo_t2s1');  % 16 Sep 2018
+% d2 = load('cris_geo_t2s1');
 
 % nLat = 20;  dLon = 6;
 % nLat = 24;  dLon = 4;
@@ -13,18 +16,23 @@ d2 = load('cris_geo_t1s1');
 
 gdiff = gtot2 - gtot1;
 
-tstr = 'CrIS minus AIRS one day obs counts';
+% tstr = 'CrIS minus AIRS one day obs counts, 16 Sep 2018';
+  tstr = 'CrIS minus AIRS one day obs counts, 1 Sep 2018';
 equal_area_map(1, latB1, lonB1, gdiff, tstr);
 caxis([-600, 600])
-saveas(gcf, 'cris_minus_airs', 'png')
+load llsmap5
+colormap(llsmap5)
+% saveas(gcf, 'cris_minus_airs', 'png')
+
+return
 
 tstr = 'AIRS one day equal area obs counts';
 equal_area_map(2, latB1, lonB1, gtot1, tstr);
 caxis([0, 700])
-saveas(gcf, 'airs_one_day', 'png')
+% saveas(gcf, 'airs_one_day', 'png')
 
 tstr = 'CrIS one day equal area obs counts';
 equal_area_map(3, latB1, lonB1, gtot2, tstr);
 caxis([0, 700])
-saveas(gcf, 'cris_one_day', 'png')
+% saveas(gcf, 'cris_one_day', 'png')
 

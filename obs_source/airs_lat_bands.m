@@ -33,6 +33,7 @@
 %
 
 addpath ../source
+addpath ../map_16day_airs_c3
 addpath /asl/packages/ccast/source
 
 %-------------------------------------------
@@ -106,6 +107,42 @@ for j = 1 : nlat
        merge_tree(ntmp(:,:,i), utmp(:,:,i), vtmp(:,:,i));
   end
 end
+
+%-----------------------------------
+% linear trends over latitude bands
+%-----------------------------------
+
+%   4  1231.330    MW window
+%   5  1613.862    400 mb peak
+%   6  2384.252    250 mb peak
+%   7  2500.601    SW window
+
+c1 = 4;  c2 = 7;
+
+P1 = zeros(2, nlat);
+P2 = zeros(2, nlat);
+
+% loop on latitude bands
+for j = 1 : nlat
+  utmp1 = squeeze(uband(c1,j,:,:));
+  utmp2 = squeeze(uband(c2,j,:,:));
+  P1(:, j) = polyfit(dnum', utmp1, 1);
+  P2(:, j) = polyfit(dnum', utmp2, 1);        
+end
+
+figure(1); clf
+x = (latB(1:48)+latB(2:49)) / 2;
+plot(x, P1(1,:)*365, x, P2(1,:)*365, 'linewidth', 2)
+axis([-90, 90, -0.05, 0.1]);
+title('AIRS 2002-2019 trends by latitude')
+legend('1231.3 cm-1', '2500.6 cm-1', 'location', 'northwest')
+xlabel('latitude')
+ylabel('dK / year')
+grid on; zoom on
+
+% saveas(gcf, 'AIRS_trends_by_latitude', 'png')
+
+return
 
 % save selected values
 save airs_lat_band_means ...
