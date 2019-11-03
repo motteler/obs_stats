@@ -37,6 +37,7 @@
 
 addpath ../source
 addpath /asl/packages/ccast/source
+addpath ../map_16day_airs_c4
 
 %-------------------------------------------
 % combine annual tabulations of 16-day maps
@@ -47,9 +48,9 @@ utab = []; % nchan x nlat x nlon x time bin mean
 vtab = []; % nchan x nlat x nlon x time bin variance
 
 % loop on annual tabulations
-for year = 2003 : 2017
+for year = 2002 : 2019
 
-  mfile = sprintf('airs_c04_%d_tab.mat', year);
+  mfile = sprintf('airs_c04_g2_%d_tab.mat', year);
   fprintf(1, 'loading %s\n', mfile);
   if exist(mfile) == 2
     c1 = load(mfile);
@@ -83,29 +84,62 @@ latB = c1.latB;
 lonB = c1.lonB;
 vlist = c1.vlist;
 
+%---------------------
+% mean and std trends
+%---------------------
+
+ic = 8; % choose a channel
+ntmp1 = squeeze(ntmp(ic,:,:,:));
+utab1 = squeeze(utab(ic,:,:,:));        % map table mean
+stab1 = sqrt(squeeze(vtab(ic,:,:,:)));  % map table std
+
+utabP = zeros(nlat,nlon,2);  % per tile mean poly fit
+stabP = zeros(nlat,nlon,2);  % per tile std poly fit
+
+for i = 1 : nlat
+  for j = 1 : nlon
+    utabP(i,j,:) = polyfit(dnum, squeeze(utab1(i,j,:))', 1);
+    stabP(i,j,:) = polyfit(dnum, squeeze(stab1(i,j,:))', 1);
+  end
+end
+
+% rescale K/day to K/year
+dutab = 365 * squeeze(utabP(:,:,1));
+dstab = 365 * squeeze(stabP(:,:,1));
+
+% zero-centered colormap
+load llsmap5
+
+tstr = sprintf('AIRS %.2f cm-1 2002-2019 mean trends', vlist(ic));
+equal_area_map(1, latB, lonB, dutab, tstr);
+c = colorbar; c.Label.String = 'degrees K / year';
+caxis([-0.21, 0.21])
+colormap(llsmap5)
+  saveas(gcf, t2fstr(tstr), 'png')
+
+tstr = sprintf('AIRS %.2f cm-1 2002-2019 std dev trends', vlist(ic));
+equal_area_map(2, latB, lonB, dstab, tstr);
+c = colorbar; c.Label.String = 'degrees K / year';
+caxis([-0.21, 0.21])
+colormap(llsmap5)
+  saveas(gcf, t2fstr(tstr), 'png')
+
+return
+
 %----------------------
 % summary mean and std
 %----------------------
 
 [nmap, umap, vmap] = merge_tree(ntmp, utab, vtab);
 
-% umap = rad2bt(vlist, umap);
-% vmap = rad2bt(vlist, vmap);
-
-ic = 6;
-
+ic = 8; % choose a channel
 utmp = squeeze(umap(ic,:,:));
-tstr = sprintf('AIRS %.2f cm-1 2003-2017 mean', vlist(ic));
-% tstr = 'mean sea surface temp';
+tstr = sprintf('AIRS %.2f cm-1 2002-2019 mean', vlist(ic));
 equal_area_map(1, latB, lonB, utmp, tstr);
 c = colorbar; c.Label.String = 'degrees (K)';
 
-return
-
-vtmp = squeeze(vmap(ic,:,:));
-tstr = sprintf('AIRS %.2f cm-1 15 year std', vlist(ic));
-% tstr = 'std sea surface temp';
-equal_area_map(2, latB, lonB, sqrt(vtmp), tstr);
+vtmp = sqrt(squeeze(vmap(ic,:,:)));
+tstr = sprintf('AIRS %.2f cm-1 2002-2019 std', vlist(ic));
+equal_area_map(2, latB, lonB, vtmp, tstr);
 c = colorbar; c.Label.String = 'degrees (K)';
-
 

@@ -1,6 +1,8 @@
 %
 % airs_obs_batch - batch wrapper for airs_obs_list
 %
+% edit both channel list and output filename to change channel sets
+%
 
 function airs_obs_batch(year)
 
@@ -28,7 +30,7 @@ if dlist(end) > yend
 end
 
 % set the output filename 
-tfile = sprintf('airs_c05y%ds%0.2d', year, taskid);
+tfile = sprintf('airs_c03y%ds%0.2d', year, taskid);
 
 % airs_obs_list options
 opt1 = struct;
@@ -42,13 +44,13 @@ opt1.adir = '/asl/data/airs/L1C';  % AIRS data
 % opt1.ixt = 37 : 54;              % 5 expanded nadir
 
 % channel set c3
-% opt1.vlist = [699.380 746.967 902.040 1231.330 1613.862 2384.252 2500.601];
+  opt1.vlist = [699.380 746.967 902.040 1231.330 1613.862 2384.252 2500.601];
 
 % channel set c4
 % opt1.vlist = [830.47 843.91 899.62 921.64 968.23 992.45 1227.71 1231.33];
 
 % channel set c5
-  opt1.vlist = [830.47 1227.71 1231.33 2456.48 2607.89 2616.38 2653.13];
+% opt1.vlist = [830.47 1227.71 1231.33 2456.48 2607.89 2616.38 2653.13];
 
 airs_obs_list(year, dlist, tfile, opt1)
 

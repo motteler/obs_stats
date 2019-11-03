@@ -68,14 +68,13 @@ for k = 1 : nset
   end
 end
 
-figure(1); clf
-tstr = 'AIRS 2002-2019 cloud forcing 4-12 K PDF map';
+tstr = 'AIRS 2002-2019 CF 4-12 K PDF map';
 bin_sum = squeeze(sum(tbmap));
 bin_span = squeeze(sum(tbmap(65:69,:,:)));
-map_test = bin_span ./ bin_sum;
-equal_area_map(1, latB, lonB, map_test, tstr);
-fstr = 'AIRS_2002-2019_CF_4-12_K_PDF_map';
-% saveas(gcf, fstr, 'png')
+bin_rel = bin_span ./ bin_sum;
+
+equal_area_map(1, latB, lonB, bin_rel, tstr);
+% saveas(gcf, t2fstr(tstr), 'png')
 
 %---------------
 % sample trends
@@ -84,33 +83,34 @@ fstr = 'AIRS_2002-2019_CF_4-12_K_PDF_map';
 [nbin, nlat, nlon, nset] = size(tbtab);
 
 % global summary for tbin subset x time
-tx = squeeze(sum(tbtab(65:69,:,:,:)));
-tx = reshape(tx, nlat * nlon, nset); 
+ty = squeeze(sum(tbtab(65:69,:,:,:)));
+ty = reshape(ty, nlat * nlon, nset); 
 
 % SST and CF flag land as NaNs
 iOK = logical(ones(nlat*nlon, 1));
 for i = 1 : nset-1
-  iOK = iOK & ~isnan(tx(:,i));
+  iOK = iOK & ~isnan(ty(:,i));
 end
 
 % sum over ocean sets
-tx = sum(tx(iOK, :));
-P = polyfit(dnum, tx, 1);
+ty = sum(ty(iOK, :));
+P = polyfit(dnum, ty, 1);
 
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
 figure(2); clf
-plot(dax, tx, dax, polyval(P, dnum), 'linewidth', 2)
-title('AIRS global 2002-2019 CF 4-12K PDF trend')
+plot(dax, ty, dax, polyval(P, dnum), 'linewidth', 2)
+tstr = 'AIRS global 2002-2019 CF 4-12K PDF trend';
+title(tstr)
 legend('16-day sets', 'linear fit', 'location', 'southwest')
 ylabel('bin count')
 xlabel('year')
 grid on; zoom on
-fstr = 'AIRS_global_2002-2019_CF_4-12K_PDF_trend';
-% saveas(gcf, fstr, 'png')
+% saveas(gcf, t2fstr(tstr), 'png')
 
-fprintf(1, 'trend = %.4f K/year\n', P(1)/365)
+fprintf(1, 'trend = %.2f counts/year\n', P(1)*365)
+fprintf(1, 'relative trend = %.2f pct/year\n', 100*P(1)*365 / mean(ty))
 
 return
 

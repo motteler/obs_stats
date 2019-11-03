@@ -78,7 +78,6 @@ for k = 1 : nset
   end
 end
 
-figure(1); clf
 % tstr = 'AIRS %.2f cm-1 2002-2019 324-340 K PDF map';
 % tstr = 'AIRS %.2f cm-1 2002-2019 320-340 K PDF map';
 % tstr = 'AIRS %.2f cm-1 2002-2019 310-330 K PDF map';
@@ -89,47 +88,44 @@ bin_sum = squeeze(sum(tbmap));
 % bin_span = squeeze(sum(tbmap(61:71,:,:)));
 % bin_span = squeeze(sum(tbmap(56:66,:,:)));
   bin_span = squeeze(sum(tbmap(36:41,:,:)));
-map_test = bin_span ./ bin_sum;
-equal_area_map(1, latB, lonB, map_test, tstr);
+bin_rel = bin_span ./ bin_sum;
 
-% fstr = 'AIRS_2002-2019_%.0f_cm-1_270-280_K_pdf_map';
-% saveas(gcf, sprintf(fstr, cfrq), 'png')
+equal_area_map(1, latB, lonB, bin_rel, tstr);
+c = colorbar; c.Label.String = 'relative weight';
+% saveas(gcf, t2fstr(tstr), 'png')
 
 %---------------
 % sample trends
 %---------------
 
-figure(2); clf
-
 % global summary for tbin subset x time
-% tx = squeeze(sum(tbtab(61:71,:,:,:)));
-% tx = squeeze(sum(tbtab(63:71,:,:,:)));
-% tx = squeeze(sum(tbtab(56:66,:,:,:)));
-  tx = squeeze(sum(tbtab(36:41,:,:,:)));
-tx = reshape(tx, 64 * 120, 390); 
-tx = sum(tx);
-P = polyfit(dnum, tx, 1);
+% ty = squeeze(sum(tbtab(63:71,:,:,:)));
+% ty = squeeze(sum(tbtab(61:71,:,:,:)));
+% ty = squeeze(sum(tbtab(56:66,:,:,:)));
+  ty = squeeze(sum(tbtab(36:41,:,:,:)));
+ty = reshape(ty, 64 * 120, 390); 
+ty = sum(ty);
+P = polyfit(dnum, ty, 1);
 
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
-plot(dax, tx, dax, polyval(P, dnum), 'linewidth', 2)
-% tstr = 'AIRS 2002-2019 %.2f cm-1 320-340 K PDF trend';
+figure(2); clf
+plot(dax, ty, dax, polyval(P, dnum), 'linewidth', 2)
 % tstr = 'AIRS 2002-2019 %.2f cm-1 324-340 K PDF trend';
+% tstr = 'AIRS 2002-2019 %.2f cm-1 320-340 K PDF trend';
 % tstr = 'AIRS 2002-2019 %.2f cm-1 310-330 K PDF trend';
   tstr = 'AIRS 2002-2019 %.2f cm-1 270-280 K PDF trend';
 tstr = sprintf(tstr, cfrq);
 title(tstr)
 legend('16-day sets', 'linear fit', 'location', 'northwest')
-
 ylabel('bin count')
 xlabel('year')
 grid on; zoom on
+% saveas(gcf, t2fstr(tstr), 'png')
 
-% fstr = 'AIRS_2002-2019_%.0f_cm-1_270-280_K_PDF_trend';
-% saveas(gcf, sprintf(fstr, cfrq), 'png')
-
-fprintf(1, 'trend = %.4f K/year\n', P(1)/365)
+fprintf(1, 'trend = %.2f counts/year\n', P(1)*365)
+fprintf(1, 'relative trend = %.2f pct/year\n', 100*P(1)*365 / mean(ty))
 
 return
 
