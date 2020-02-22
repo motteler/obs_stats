@@ -17,7 +17,8 @@
 
 addpath ../source
 addpath /asl/packages/ccast/source
-addpath ../map_16day_airs_c4
+% addpath ../map_16day_airs_c4
+  addpath ../pdf_16day_airs
 
 %-------------------------------------------
 % combine annual tabulations of 16-day maps
@@ -68,49 +69,99 @@ for k = 1 : nset
   end
 end
 
-tstr = 'AIRS 2002-2019 CF 4-12 K PDF map';
+% tstr = 'AIRS 2002-2019 CF 4-12 K PDF map';
+  tstr = 'AIRS 2002-2019 CF 4-8 K PDF map';
+% tstr = 'AIRS 2002-2019 CF 50-100 K PDF map';
 bin_sum = squeeze(sum(tbmap));
-bin_span = squeeze(sum(tbmap(65:69,:,:)));
+% bin_span = squeeze(sum(tbmap(65:69,:,:)));
+  bin_span = squeeze(sum(tbmap(67:69,:,:)));
+% bin_span = squeeze(sum(tbmap(21:46,:,:)));
 bin_rel = bin_span ./ bin_sum;
 
 equal_area_map(1, latB, lonB, bin_rel, tstr);
-% saveas(gcf, t2fstr(tstr), 'png')
+
+% saveas(gcf, t2fstr(tstr), 'png'
+% saveas(gcf, t2fstr(tstr), 'fig')
 
 %---------------
 % sample trends
 %---------------
 
+% optional -22:22 lat band subset
+  tbtab = tbtab(:,21:45,:,:);
+
 [nbin, nlat, nlon, nset] = size(tbtab);
 
 % global summary for tbin subset x time
-ty = squeeze(sum(tbtab(65:69,:,:,:)));
+% we need both the overall and subrange bin sums
+tz = squeeze(sum(tbtab));
+% ty = squeeze(sum(tbtab(65:69,:,:,:)));
+  ty = squeeze(sum(tbtab(67:69,:,:,:)));
+% ty = squeeze(sum(tbtab(21:46,:,:,:)));
+
 ty = reshape(ty, nlat * nlon, nset); 
+tz = reshape(tz, nlat * nlon, nset); 
 
 % SST and CF flag land as NaNs
 iOK = logical(ones(nlat*nlon, 1));
+jOK = iOK;
 for i = 1 : nset-1
   iOK = iOK & ~isnan(ty(:,i));
+  jOK = jOK & ~isnan(tz(:,i));
 end
 
 % sum over ocean sets
+tz = sum(tz(jOK, :));
 ty = sum(ty(iOK, :));
-P = polyfit(dnum, ty, 1);
+P = polyfit(dnum, ty./tz, 1);
 
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
 figure(2); clf
-plot(dax, ty, dax, polyval(P, dnum), 'linewidth', 2)
-tstr = 'AIRS global 2002-2019 CF 4-12K PDF trend';
+% plot(dax, ty, dax, polyval(P, dnum), 'linewidth', 2)
+  plot(dax, ty./tz, dax, polyval(P, dnum), 'linewidth', 2)
+% tstr = 'AIRS global 2002-2019 CF 4-12K PDF trend';
+  tstr = 'AIRS global 2002-2019 CF 4-8K PDF trend';
+% tstr = 'AIRS global 2002-2019 CF 50-100K PDF trend';
 title(tstr)
 legend('16-day sets', 'linear fit', 'location', 'southwest')
-ylabel('bin count')
+ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
-% saveas(gcf, t2fstr(tstr), 'png')
 
-fprintf(1, 'trend = %.2f counts/year\n', P(1)*365)
-fprintf(1, 'relative trend = %.2f pct/year\n', 100*P(1)*365 / mean(ty))
+% saveas(gcf, t2fstr(tstr), 'png')
+% saveas(gcf, t2fstr(tstr), 'fig')
+
+% summary annual trend
+% zz = polyval(P, dnum);  % the interpolated function
+% w1 = diff(zz);          % change per 16-day step
+% w2 = w1(1) * 23;        % annual change
+% fprintf(1, 'trend = %.4f pct/year\n', 100*w2)
+
+% take a simple moving average of pdf weights
+nsp = 11;  % half-span
+pwt = ty./tz;
+pmv = zeros(1,nset);
+
+for j = 1 : nset
+  i1 = max(1, j-nsp);
+  i2 = min(j+nsp, nset);
+% [i1,i2]
+  pmv(j) = mean(pwt(i1:i2));
+end
+
+figure(3); clf
+plot(dax, pmv, 'linewidth', 2)
+xlim([datetime('Sep 6, 2003'), datetime('Aug 5, 2018')])
+% tstr = 'AIRS global 2003-2018 CF 4-8K PDF moving avg';
+  tstr = 'AIRS -22:22 lat 2003-2018 CF 4-8K PDF moving avg';
+title(tstr)
+ylabel('PDF weight')
+xlabel('year')
+grid on; zoom on
+
+saveas(gcf, t2fstr(tstr), 'png')
 
 return
 

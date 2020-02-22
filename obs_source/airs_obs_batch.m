@@ -34,7 +34,7 @@ tfile = sprintf('airs_c03y%ds%0.2d', year, taskid);
 
 % airs_obs_list options
 opt1 = struct;
-opt1.adir = '/asl/data/airs/L1C';  % AIRS data
+opt1.adir = '/asl/hpcnfs1/airs/L1C';  % AIRS data
 
 % scan selection
 % opt1.ixt = 43 : 48;              % 1 near nadir

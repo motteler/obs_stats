@@ -1,25 +1,55 @@
 
-map_source
-----------
-recent tests
+"obs_stats" is a package to do long-span stats from AIRS and CrIS
+SDR and other supporting data, with minimal obs subsetting.
 
-obs_source
------------
-an "obs list" is a subset of AIRS or CrIS obs, typically a
-latitude weighted subset of all obs for 16-days, for a small
-subset of channels.  See obs_source/README for more info.
 
-obs_quint_source
------------------
-earlier versions of obs list functions that work with quintiles
-(73-day sets).  See obs_quint_src/README for more info.
+Recent Tests and Data
+======================
+
+An "obs list" is a subset of AIRS or CrIS SDR data, typically a
+latitude weighted subset of all obs for 16-days, for a small subset
+of channels.  A "map table" is an nchan x nlat x nlon x nset table
+or array of maps of 16-day maps mean and variance, usually for a
+full year (23 16-day sets).  A "PDF table" is an nbin x nlat x nlon
+x nset table of 16-day PDF maps, also usually for a full year.
+
+The obs_source directory has scripts and functions to tabulate obs
+lists, map tables, and pdf tables, and to do stats on the map and
+pdf tables.  See obs_source/README for more info.
+
+The source directory has general support and utility functions for
+the obs stats package; see source/README for more info.
+
+It takes some time to tabulate the obs lists--around a week, to do
+all the AIRS data--but doing stats from the obs lists is relatively
+fast; maybe a couple of hours to look at every obs list file.  
+Similarly, it takes a couple of hours to build the map or pdf tables
+from the obs lists, but doing stats from the tables is very fast, a
+few minutes at most.
 
 recent data
 -----------
-obs_16day_airs_c* - 16-day AIRS rad obs lists and map stats
-obs_16day_mix_v1 - 16-day AIRS & CrIS obs from LW window span
-map_16day_mix_v1 - 16-day AIRS & CrIS maps from LW window span 
-obs_quint_mix_v1 - quint AIRS & CrIS obs, LW & SW window span
+obs_16day_airs_c* - 16-day AIRS obs lists for channel set c<n>
+obs_16day_cris_c* - 16-day CrIS obs lists for channel set c<n>
+map_16day_airs_c* - 16-day map tables for AIRS channel set c<n>
+pdf_16day_airs    - 16-day PDF tables for one channel of AIRS data
+
+
+Older Tests And Data
+=====================
+
+geo tests
+----------
+AIRS and CrIS geo obs list scripts and functions.  These read AIRS
+or CrIS SDR files and tabulate lat, lon, time, and zenith angles for
+all obs over a set of days and a selected scan pattern, and do stats
+on the resulting obs lists.  See the README files in geo_source and
+geo_data
+
+obs_quint_source
+-----------------
+These are earlier versions of obs list functions that work with
+quintiles (73-day sets).  See obs_quint_src/README for more info.
 
 tbin tests
 -----------
@@ -41,19 +71,4 @@ in airs_pdfs, cris_pdfs, and pdf_test_*.
   airs_pdfs   - AIRS tbin data for 2002-2017, to 340K
   cris_pdfs   - CrIS tbin data for 2015-2016, to 340K
 
-geo tests
-----------
-See the README files in geo_source and geo_data
-
-functions
------------
-  fixmyQC - QC from the ccast L1b_stat flags
-  equal_area_bins - count and mean for equal area trapezoids
-  equal_area_map  - global map for equal area trapezoids
-  equal_area_spherical_bands - equal area latitude bands
-  usgs_deg10_dem  - calculate land fraction
-
-other scripts
---------------
-  airs_fields - list most AIRS granule fields
 

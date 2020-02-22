@@ -11,7 +11,7 @@
 #SBATCH --account=pi_strow
 #SBATCH --mem-per-cpu=20000
 #SBATCH --oversubscribe
-#SBATCH --array=11-20%3
+#SBATCH --array=18-23%3
 # #SBATCH --array=1-23%4
 
 # bad node list

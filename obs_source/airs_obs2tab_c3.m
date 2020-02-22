@@ -20,7 +20,8 @@ for year = 2019
   sind = [];
 
   % loop on 16-day sets
-  for i = 1 : 23
+% for i = 1 : 23
+  for i = 18 : 23       % *** temporary subrange ***
 
     % load the next 16-day set
     afile = sprintf('airs_c03y%ds%0.2d.mat', year, i);

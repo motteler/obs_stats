@@ -12,7 +12,8 @@
 %   6    992.45   Window
 %   7   1227.71   Weak water, used to get column water with 1520
 %   8   1231.33   Window, lowest WV absorption
-%   9   sea surface temperature
+%   9   SST, sea surface temperature
+%  10   CF from SST, 7 and 8 above
 % 
 % map table
 %   dnum - time index as datenums
@@ -50,7 +51,8 @@ vtab = []; % nchan x nlat x nlon x time bin variance
 % loop on annual tabulations
 for year = 2002 : 2019
 
-  mfile = sprintf('airs_c04_g2_%d_tab.mat', year);
+% mfile = sprintf('airs_c04_g2_%d_tab.mat', year);
+  mfile = sprintf('airs_c04x_g2_%d_tab.mat', year);
   fprintf(1, 'loading %s\n', mfile);
   if exist(mfile) == 2
     c1 = load(mfile);
@@ -88,10 +90,12 @@ vlist = c1.vlist;
 % mean and std trends
 %---------------------
 
-ic = 8; % choose a channel
+ic = 10; % choose a channel
 ntmp1 = squeeze(ntmp(ic,:,:,:));
 utab1 = squeeze(utab(ic,:,:,:));        % map table mean
 stab1 = sqrt(squeeze(vtab(ic,:,:,:)));  % map table std
+
+if ic == 10, utab1 = -utab1; end  % flip sign of CF
 
 utabP = zeros(nlat,nlon,2);  % per tile mean poly fit
 stabP = zeros(nlat,nlon,2);  % per tile std poly fit
@@ -110,19 +114,23 @@ dstab = 365 * squeeze(stabP(:,:,1));
 % zero-centered colormap
 load llsmap5
 
-tstr = sprintf('AIRS %.2f cm-1 2002-2019 mean trends', vlist(ic));
+% tstr = sprintf('AIRS %.2f cm-1 2002-2019 mean trends', vlist(ic));
+  tstr = sprintf('AIRS CF 2002-2019 mean trends');
 equal_area_map(1, latB, lonB, dutab, tstr);
 c = colorbar; c.Label.String = 'degrees K / year';
-caxis([-0.21, 0.21])
+% caxis([-0.21, 0.21])
+  caxis([-0.24, 0.24])
 colormap(llsmap5)
-  saveas(gcf, t2fstr(tstr), 'png')
+% saveas(gcf, t2fstr(tstr), 'png')
 
-tstr = sprintf('AIRS %.2f cm-1 2002-2019 std dev trends', vlist(ic));
+% tstr = sprintf('AIRS %.2f cm-1 2002-2019 std dev trends', vlist(ic));
+  tstr = sprintf('AIRS CF 2002-2019 std dev trends');
 equal_area_map(2, latB, lonB, dstab, tstr);
 c = colorbar; c.Label.String = 'degrees K / year';
-caxis([-0.21, 0.21])
+% caxis([-0.21, 0.21])
+  caxis([-0.24, 0.24])
 colormap(llsmap5)
-  saveas(gcf, t2fstr(tstr), 'png')
+% saveas(gcf, t2fstr(tstr), 'png')
 
 return
 
@@ -141,5 +149,38 @@ c = colorbar; c.Label.String = 'degrees (K)';
 vtmp = sqrt(squeeze(vmap(ic,:,:)));
 tstr = sprintf('AIRS %.2f cm-1 2002-2019 std', vlist(ic));
 equal_area_map(2, latB, lonB, vtmp, tstr);
+c = colorbar; c.Label.String = 'degrees (K)';
+
+return
+
+%----------------------
+% selected annual diffs
+%-----------------------
+
+y1 = 115;
+y2 = y1 + 10 * 23;
+datestr(dnum(y1))
+datestr(dnum(y2))
+s1 = y1 : y1 + 22;
+s2 = y2 : y2 + 22;
+
+[datestr(dnum(s1(1))), '  ', datestr(dnum(s1(end)))]
+[datestr(dnum(s2(1))), '  ', datestr(dnum(s2(end)))]
+
+ntmp1 = ntmp(:,:,:,s1);
+utmp1 = utab(:,:,:,s1);
+vtmp1 = vtab(:,:,:,s1);
+[nmap1, umap1, vmap1] = merge_tree(ntmp1, utmp1, vtmp1);
+
+ntmp2 = ntmp(:,:,:,s2);
+utmp2 = utab(:,:,:,s2);
+vtmp2 = vtab(:,:,:,s2);
+[nmap2, umap2, vmap2] = merge_tree(ntmp2, utmp2, vtmp2);
+
+udiff = umap2 - umap1;           % take the difference
+udiff = squeeze(udiff(10,:,:));  % select a channel for plots
+
+tstr = 'AIRS CF 2017 minus 2007 difference';
+equal_area_map(1, latB, lonB, udiff, tstr);
 c = colorbar; c.Label.String = 'degrees (K)';
 
