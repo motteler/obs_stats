@@ -13,19 +13,19 @@ or array of maps of 16-day maps mean and variance, usually for a
 full year (23 16-day sets).  A "PDF table" is an nbin x nlat x nlon
 x nset table of 16-day PDF maps, also usually for a full year.
 
-The obs_source directory has scripts and functions to tabulate obs
-lists, map tables, and pdf tables, and to do stats on the map and
-pdf tables.  See obs_source/README for more info.
-
-The source directory has general support and utility functions for
-the obs stats package; see source/README for more info.
-
 It takes some time to tabulate the obs lists--around a week, to do
 all the AIRS data--but doing stats from the obs lists is relatively
 fast; maybe a couple of hours to look at every obs list file.  
 Similarly, it takes a couple of hours to build the map or pdf tables
 from the obs lists, but doing stats from the tables is very fast, a
 few minutes at most.
+
+The obs_source directory has scripts and functions to tabulate obs
+lists, map tables, and pdf tables, and to do stats on the map and
+pdf tables.  See obs_source/README for more info.
+
+The source directory has general support and utility functions for
+the obs stats package; see source/README for more info.
 
 recent data
 -----------

@@ -14,6 +14,12 @@
 %   dnum  - nset vector, datenum values for set index
 %
 % this version is for CF and SST plots (NaNs for land)
+%
+% The section "global or regional trends" takes a region specified
+% with a bounding box or with a list of lat/lon pairs, finds the PDF
+% for the region, for each 16-day set, and plots both raw trends and
+% trends smoothed with a moving average.
+%
 
 addpath ../source
 addpath /asl/packages/ccast/source
@@ -54,9 +60,9 @@ lonB = c1.lonB;
 % tbins = c1.tbins;
 tbins = -140 : 2 : 70;
 
-%------------
-% sample map
-%------------
+%---------------------------------
+% summary map over all time steps
+%---------------------------------
 
 % sum bins over all time steps
 [nbin, nlat, nlon, nset] = size(tbtab);
@@ -81,56 +87,75 @@ bin_rel = bin_span ./ bin_sum;
 equal_area_map(1, latB, lonB, bin_rel, tstr);
 
 % saveas(gcf, t2fstr(tstr), 'png'
-% saveas(gcf, t2fstr(tstr), 'fig')
 
-%---------------
-% sample trends
-%---------------
-
-% optional -22:22 lat band subset
-  tbtab = tbtab(:,21:45,:,:);
+%---------------------------
+% global or regional trends
+%---------------------------
 
 [nbin, nlat, nlon, nset] = size(tbtab);
 
-% global summary for tbin subset x time
-% we need both the overall and subrange bin sums
+% take both overall and subrange bin sums, for each map tile.
+% result is an nlat x nlon x nset array.
 tz = squeeze(sum(tbtab));
-% ty = squeeze(sum(tbtab(65:69,:,:,:)));
-  ty = squeeze(sum(tbtab(67:69,:,:,:)));
-% ty = squeeze(sum(tbtab(21:46,:,:,:)));
+ty = squeeze(sum(tbtab(67:69,:,:,:)));
 
-ty = reshape(ty, nlat * nlon, nset); 
-tz = reshape(tz, nlat * nlon, nset); 
+if true 
+  % do a geo subset from lat/lon bounds
+  % ilat = 1:nlat;  ilon = 1:nlon;   % all lat and lon
+  % ilat = 21:45;                    % -22:22 latitude band
+  % ilat = 21:22;   ilon = 63:64;    % 2 x 2 W. Africa ocean
+    ilat = 21;      ilon = 63;       % single tile test
 
-% SST and CF flag land as NaNs
-iOK = logical(ones(nlat*nlon, 1));
-jOK = iOK;
-for i = 1 : nset-1
-  iOK = iOK & ~isnan(ty(:,i));
-  jOK = jOK & ~isnan(tz(:,i));
+  % apply the region selection
+  ty = ty(ilat, ilon, :);
+  tz = tz(ilat, ilon, :);
+
+  % flatten the resulting lat/lon array
+  [mlat, mlon, mset] = size(tz);
+  mtile = mlat * mlon;
+  ty = reshape(ty, mtile, mset); 
+  tz = reshape(tz, mtile, mset); 
+else
+  % do a geo subset from a list of [lat, lon] pairs
+  % iList = [[22, 63]; [23, 63]; [21, 64]; [22, 64]];
+  % iList = [[21, 63]; [21, 64]; [22, 63]; [22, 64]];
+  iList = [21, 63];
+
+  % flatten the original lat/lon array
+  ntile = nlat * nlon;
+  ty = reshape(ty, ntile, nset); 
+  tz = reshape(tz, ntile, nset); 
+
+  % get indices into the flattened array
+  ix = sub2ind([nlat, nlon], iList(:,1), iList(:,2));
+  ty = ty(ix, :);
+  tz = tz(ix, :);
+end
+
+% check for land-flag NaNs
+[mtile, mset] = size(tz);
+iOK = logical(ones(mtile, 1));
+for i = 1 : mset
+  iOK = iOK & ~isnan(tz(:,i));
 end
 
 % sum over ocean sets
-tz = sum(tz(jOK, :));
-ty = sum(ty(iOK, :));
+tz = sum(tz(iOK, :),1);
+ty = sum(ty(iOK, :),1);
 P = polyfit(dnum, ty./tz, 1);
 
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
 figure(2); clf
-% plot(dax, ty, dax, polyval(P, dnum), 'linewidth', 2)
-  plot(dax, ty./tz, dax, polyval(P, dnum), 'linewidth', 2)
-% tstr = 'AIRS global 2002-2019 CF 4-12K PDF trend';
-  tstr = 'AIRS global 2002-2019 CF 4-8K PDF trend';
-% tstr = 'AIRS global 2002-2019 CF 50-100K PDF trend';
+plot(dax, ty./tz, dax, polyval(P, dnum), 'linewidth', 2)
+tstr = 'AIRS [region] 2002-2019 CF 4-8K PDF trend';
 title(tstr)
 legend('16-day sets', 'linear fit', 'location', 'southwest')
 ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
 
-% saveas(gcf, t2fstr(tstr), 'png')
 % saveas(gcf, t2fstr(tstr), 'fig')
 
 % summary annual trend
@@ -154,36 +179,11 @@ end
 figure(3); clf
 plot(dax, pmv, 'linewidth', 2)
 xlim([datetime('Sep 6, 2003'), datetime('Aug 5, 2018')])
-% tstr = 'AIRS global 2003-2018 CF 4-8K PDF moving avg';
-  tstr = 'AIRS -22:22 lat 2003-2018 CF 4-8K PDF moving avg';
+tstr = 'AIRS [region] 2003-2018 CF 4-8K PDF moving avg';
 title(tstr)
 ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
 
-saveas(gcf, t2fstr(tstr), 'png')
-
-return
-
-%---------------
-% global summary
-%---------------
-
-figure(2); clf
-tbins = -140 : 2 : 70;  % want to get this from the file
-
-% reshape tbtab for easier ocean indexing
-tbtab = reshape(tbtab, nbin, nlat*nlon, nset);
-
-iL = cOR(cOR(isnan(tbtab))');  % boolean flags of land tiles
-iW = find(~iL);                % index list of ocean tiles
-tbOcean = tbtab(:,iW,:);       % ocean-only map tiles
-
-tb_all_obs_ocean = sum(tbOcean(:,:),2);
-semilogy(tbins,tb_all_obs_ocean, 'linewidth', 2)
-title('AIRS 2002-2019 CF global counts');
-xlabel('temperature bins (K)')
-ylabel('bin counts')
-grid on; zoom on
-% saveas(gcf, 'AIRS_2002-2019_CF_global_counts', 'png')
+% saveas(gcf, t2fstr(tstr), 'fig')
 
