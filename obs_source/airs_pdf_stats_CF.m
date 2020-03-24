@@ -23,8 +23,7 @@
 
 addpath ../source
 addpath /asl/packages/ccast/source
-% addpath ../map_16day_airs_c4
-  addpath ../pdf_16day_airs
+addpath ../pdf_16day_airs
 
 %-------------------------------------------
 % combine annual tabulations of 16-day maps
@@ -83,9 +82,7 @@ bin_sum = squeeze(sum(tbmap));
   bin_span = squeeze(sum(tbmap(67:69,:,:)));
 % bin_span = squeeze(sum(tbmap(21:46,:,:)));
 bin_rel = bin_span ./ bin_sum;
-
 equal_area_map(1, latB, lonB, bin_rel, tstr);
-
 % saveas(gcf, t2fstr(tstr), 'png'
 
 %---------------------------
@@ -99,7 +96,7 @@ equal_area_map(1, latB, lonB, bin_rel, tstr);
 tz = squeeze(sum(tbtab));
 ty = squeeze(sum(tbtab(67:69,:,:,:)));
 
-if true 
+if false
   % do a geo subset from lat/lon bounds
   % ilat = 1:nlat;  ilon = 1:nlon;   % all lat and lon
   % ilat = 21:45;                    % -22:22 latitude band
@@ -117,9 +114,9 @@ if true
   tz = reshape(tz, mtile, mset); 
 else
   % do a geo subset from a list of [lat, lon] pairs
-  % iList = [[22, 63]; [23, 63]; [21, 64]; [22, 64]];
   % iList = [[21, 63]; [21, 64]; [22, 63]; [22, 64]];
-  iList = [21, 63];
+  % iList = [21, 63];
+  d1 = load('mbl_ind_1'); iList = d1.iList;
 
   % flatten the original lat/lon array
   ntile = nlat * nlon;
@@ -142,27 +139,18 @@ end
 % sum over ocean sets
 tz = sum(tz(iOK, :),1);
 ty = sum(ty(iOK, :),1);
-P = polyfit(dnum, ty./tz, 1);
 
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
 figure(2); clf
-plot(dax, ty./tz, dax, polyval(P, dnum), 'linewidth', 2)
-tstr = 'AIRS [region] 2002-2019 CF 4-8K PDF trend';
+plot(dax, ty./tz, 'linewidth', 2)
+tstr = 'AIRS [region] 2002-2019 CF 4-8K 16-day PDFs';
 title(tstr)
-legend('16-day sets', 'linear fit', 'location', 'southwest')
 ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
-
 % saveas(gcf, t2fstr(tstr), 'fig')
-
-% summary annual trend
-% zz = polyval(P, dnum);  % the interpolated function
-% w1 = diff(zz);          % change per 16-day step
-% w2 = w1(1) * 23;        % annual change
-% fprintf(1, 'trend = %.4f pct/year\n', 100*w2)
 
 % take a simple moving average of pdf weights
 nsp = 11;  % half-span
@@ -177,13 +165,20 @@ for j = 1 : nset
 end
 
 figure(3); clf
-plot(dax, pmv, 'linewidth', 2)
+P = polyfit(dnum, pmv, 1);
+plot(dax, pmv, dax, polyval(P, dnum), 'linewidth', 2)
+legend('moving avg', 'linear fit')
 xlim([datetime('Sep 6, 2003'), datetime('Aug 5, 2018')])
-tstr = 'AIRS [region] 2003-2018 CF 4-8K PDF moving avg';
+tstr = 'AIRS [region] 2003-2018 CF 4-8K PDF 1-yr moving avg';
 title(tstr)
 ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
-
 % saveas(gcf, t2fstr(tstr), 'fig')
+
+% summary annual trend
+zz = polyval(P, dnum);  % the interpolated function
+w1 = diff(zz);          % change per 16-day step
+w2 = w1(1) * 23;        % annual change
+fprintf(1, 'trend = %.4f pct/year\n', 100*w2)
 

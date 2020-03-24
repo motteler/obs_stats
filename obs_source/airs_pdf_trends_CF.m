@@ -83,9 +83,7 @@ bin_sum = squeeze(sum(tbmap));
   bin_span = squeeze(sum(tbmap(67:69,:,:)));
 % bin_span = squeeze(sum(tbmap(21:46,:,:)));
 bin_rel = bin_span ./ bin_sum;
-
 equal_area_map(1, latB, lonB, bin_rel, tstr);
-
 % saveas(gcf, t2fstr(tstr), 'fig')
 
 %---------------------------
@@ -102,7 +100,7 @@ ty = squeeze(sum(tbtab(67:69,:,:,:)));  % 4-8K
 % nlat x nlon x nstep ocean flag;
 % iOK = ~isnan(tz);
 
-% moving average along the time (last) dimension
+% set up moving average along the time (last) dimension
 nsp = 11;       % half-span
 pwt = ty./tz;   % normalize
 pmv = zeros(nlat,nlon,nset);  % PDF moving avg
@@ -124,17 +122,28 @@ for i = 1 : nlat
   end
 end
 
-tstr = 'AIRS 2002-2019 CF 4-8 K PDF > 0.4 counts';
-% tile_val = 23 * squeeze(P(1,:,:));
-tile_val = sum(pmv > 0.4, 3);
+tstr = 'AIRS 2002-2019 CF 4-8 K PDF trends';
+tile_val = squeeze(P(1,:,:)) * 365;
 equal_area_map(2, latB, lonB, tile_val, tstr);
-% saveas(gcf, t2fstr(tstr), 'fig')
+c = colorbar; c.Label.String = 'annual PDF change';
+caxis([-0.005, 0.01])
+% saveas(gcf, t2fstr(tstr), 'png')
 
-% find sample hot spot
-% ix = find(tile_val > 380);
+tstr = 'AIRS 2002-2019 CF 4-8 K PDF > 0.4 counts';
+tile_val = sum(pmv > 0.4, 3);
+equal_area_map(3, latB, lonB, tile_val, tstr);
+c = colorbar; c.Label.String = 'count';
+% saveas(gcf, t2fstr(tstr), 'png')
+
+% find indices of hot spots
+% ix = find(tile_val > 300);
 % [i,j] = ind2sub([64,120], ix)
 
-% select a tile
+%---------------------------------
+% trend vs time for a single tile
+%---------------------------------
+
+% select a single tile
 % ilat = 22;  ilon = 63;
   ilat = 23;  ilon = 63;
 % ilat = 21;  ilon = 64;
@@ -145,15 +154,22 @@ tlat = latB(ilat); tlon = lonB(ilon);
 % datetime axes for plots 
 dax = datetime(dnum, 'ConvertFrom', 'datenum');
 
-figure(3); clf
-plot(dax, squeeze(pmv(ilat, ilon, :)), 'linewidth', 2);
-tstr = sprintf('AIRS tile %.1f, %.1f CF 4-8K PDF trend', tlat, tlon); 
+figure(4); clf
+mv_pdf = squeeze(pmv(ilat, ilon, :));
+mv_fit = polyval(P(:,ilat, ilon), dnum);
+plot(dax, mv_pdf, dax, mv_fit, 'linewidth', 2);
+tstr = sprintf('AIRS tile (%.1f, %.1f) CF 4-8K PDF trend', tlat, tlon); 
 title(tstr)
+legend('moving average', 'linear fit')
 ylabel('PDF weight')
 xlabel('year')
 grid on; zoom on
-
 % saveas(gcf, t2fstr(tstr), 'fig')
 
-return
+% summary annual trend
+zz = polyval(P(:,ilat,ilon), dnum);  % the interpolated function
+w1 = diff(zz);                       % change per 16-day step
+w2 = w1(1) * 23;                     % annual change
+w3 = P(1,ilat,ilon) * 365;           % annual change 
+fprintf(1, 'trend = %.4f pct/year\n', 100*w2)
 

@@ -28,7 +28,8 @@ stats from map and PDF tables
   airs_lat_bands   - mean and std of latitude bands 
   airs_tab_stats*  - mapped mean, std, and diffs
   cris_tab_stats   - mapped mean and std
-  airs_pdf_stats*  - mapped PDFs and trends
+  airs_pdf_stats*  - mapped PDFs and regional trends
+  airs_pdf_trends* - mapped PDFs and all-tile trends
 
 stats from 16-day obs lists
 ----------------------------
