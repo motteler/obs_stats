@@ -20,8 +20,8 @@
 function airs_obs_list(year, dlist, ofile, opt1)
 
 % default params 
-adir = '/asl/data/airs/L1C';   % path to AIRS data
-ixt = 1 : 90;                  % full scans
+adir = '/asl/xfs3/airs/L1C_v672';  % path to AIRS data
+ixt = 1 : 90;                      % full scans
 
 % default frequency list (LW and SW windows)
 vlist = [902.040, 902.387, 2499.533, 2500.601];
@@ -45,6 +45,8 @@ vlist = afrq(ixv);
 
 % initialize obs lists
 rad_list = [];
+% proc_list = [];
+% reas_list = [];
 lat_list = [];
 lon_list = [];
 tai_list = [];
@@ -74,6 +76,16 @@ for di = dlist
     end
     rad = rad(:, ixt, ixv);        % cross track and channel subset
     rad = permute(rad, [3,2,1]);   % transpose to column order
+
+%   % add L1cProc, nchan x 90 x 135
+%   proc = hdfread(afile, 'L1cProc');
+%   proc = proc(:, ixt, ixv);      % cross track and channel subset
+%   proc = permute(proc, [3,2,1]); % transpose to column order
+%
+%   % add L1cSynthReason, nchan x 90 x 135
+%   reas = hdfread(afile, 'L1cSynthReason');
+%   reas = reas(:, ixt, ixv);      % cross track and channel subset
+%   reas = permute(reas, [3,2,1]); % transpose to column order
 
     % read geo data, 90 x 135
     lat = single(hdfread(afile, 'Latitude'));
@@ -118,6 +130,8 @@ for di = dlist
 
     % apply subsetting
     rad = rad(:,jx);
+%   proc = proc(:,jx);
+%   reas = reas(:,jx);
     lat = lat(jx);
     lon = lon(jx);
     tai = tai(jx);
@@ -133,6 +147,8 @@ for di = dlist
 
     % add obs to lists
     rad_list = [rad_list, rad];
+%   proc_list = [proc_list, proc];
+%   reas_list = [reas_list, reas];
     lat_list = [lat_list; lat];
     lon_list = [lon_list; lon];
     tai_list = [tai_list; tai];
@@ -144,6 +160,11 @@ for di = dlist
   fprintf(1, '\n')
 end % loop on days
 
-save(ofile, 'year', 'dlist', 'adir', 'ixt', 'ixv', 'vlist', 'rad_list', ...
-  'lat_list', 'lon_list', 'tai_list', 'zen_list', 'sol_list', 'asc_list');
+% save(ofile, 'year', 'dlist', 'adir', 'ixt', 'ixv', 'vlist', ...
+%   'rad_list', 'proc_list', 'reas_list', 'lat_list', 'lon_list', ...
+%   'tai_list', 'zen_list', 'sol_list', 'asc_list');
+
+save(ofile, 'year', 'dlist', 'adir', 'ixt', 'ixv', 'vlist', ...
+  'rad_list', 'lat_list', 'lon_list', 'tai_list', 'zen_list', ...
+  'sol_list', 'asc_list');
 

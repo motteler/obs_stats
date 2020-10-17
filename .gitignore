@@ -3,6 +3,7 @@
 #
 
 # data & misc
+*.nc
 *.h5
 *.hdf
 *.mat
@@ -39,3 +40,7 @@
 *.bak
 *~
 
+# skip these...
+zold
+*logs*
+*tmp

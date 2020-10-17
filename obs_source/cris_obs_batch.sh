@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# usage: sbatch airs_obs_batch.sh <year>
+# usage: sbatch cris_obs_batch.sh <year>
 #
 
 # sbatch options
-#SBATCH --job-name=airs_obs
+#SBATCH --job-name=cris_obs
 # #SBATCH --output=airs_%A_%a.out
 # #SBATCH --partition=high_mem
 #SBATCH --partition=batch
@@ -23,8 +23,6 @@
 MATLAB=/usr/ebuild/software/MATLAB/2020a/bin/matlab
 MATOPT='-nojvm -nodisplay -nosplash'
 
-# srun $MATLAB $MATOPT -r "airs_obs_batch($1); exit"
-
-srun --output=airs_$1_%A_%a.out \
-   $MATLAB $MATOPT -r "airs_obs_batch($1); exit"
+srun --output=cris_$1_%A_%a.out \
+   $MATLAB $MATOPT -r "cris_obs_batch($1); exit"
 
